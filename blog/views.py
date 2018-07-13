@@ -15,5 +15,5 @@ def contact(request):
     return render(request, 'contact.html', )
 
 
-def single(request):
-    return render(request, 'single.html', )
+def article(request):
+    return render(request, 'article.html', )
