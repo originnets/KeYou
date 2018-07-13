@@ -1,0 +1,43 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- 加载title -->
+		<title>{% block title %} {% endblock %}</title>
+		
+		<!-- 加载css -->
+		<link rel="stylesheet" href="{% static 'blog/css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'blog/css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'blog/vendors/owl-carousel/assets/owl.carousel.css' %}">
+		<link rel="stylesheet" href="{% static 'blog/vendors/magnific-popup/magnific-popup.css' %}">
+		<link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
+		<link href="{% static 'blog/css/theme/green.css' %}" rel="stylesheet">
+		{% block css %} {% endblock %}
+	</head>
+	<body class="home">
+		
+		<!-- 加载header1 -->
+		{% include "base/header2.html"%}
+		
+		<!-- 加载content -->
+		{% block content %} {% endblock %}
+		
+		<!-- 加载footer -->
+		{% include "base/footer.html "%}
+		
+		<!-- 加载js -->
+		<script src="{% static 'blog/js/jquery-2.2.0.min.js' %}"></script>
+		<script src="{% static 'blog/js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'blog/vendors/owl-carousel/owl.carousel.min.js' %}"></script>
+		<script src="{% static 'blog/vendors/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+		<script src="{% static 'blog/vendors/instafeed/instafeed.min.js' %}"></script>
+		<script src="{% static 'blog/vendors/imagesLoaded/imagesloaded.pkgd.min.js' %}"></script>
+		<script src="{% static 'blog/vendors/isotope/isotope.pkgd.min.js' %}"></script>
+		<script src="{% static 'blog/js/theme.js' %}"></script>
+		{% block js %} {% endblock %}
+	</body>
+</html>

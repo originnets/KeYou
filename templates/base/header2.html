@@ -1,0 +1,24 @@
+{% load staticfiles %}
+<!-- Header2 -->
+<header class="row transparent white" data-spy="affix" data-offset-top="300" id="header">
+    <div class="container">
+        <div class="row top-header">
+			<div class="col-sm-2 logo-col">
+                <a href="index.html"><img src="{% static 'blog/images/logo-black-green.png' %}" alt=""></a>
+            </div>
+            <div class="col-sm-2 menu-trigger-col">
+                <a href="#" class="menu-trigger black pull-right">	
+                    <span class="active-page"><img src="{% static 'blog/images/menu-align-dark.png' %}" alt="" class="icon-burger"> 博客</span>
+                </a>
+            </div>
+            <div class="col-sm-5 search-form-col">
+                <form action="#" method="get" class="search-form">
+                    <div class="input-group">
+                        <span class="input-group-addon"><img src="{% static 'blog/images/search-icon-dark.png' %}" alt=""></span>
+                        <input type="search" class="form-control" placeholder="搜 索">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
