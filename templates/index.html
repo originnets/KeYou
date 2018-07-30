@@ -35,71 +35,69 @@
 	    </div>
 	</section>
 	<section class="row content-wrap">
-            <div class="container">
-                <div class="row" id="post-masonry" >
-                {% for posts_list_data in pag_of_posts.object_list %}
-                    <article class="col-sm-4 post post-masonry post-format-image">
-                        <div class="post-wrapper row">
-                            <div class="featured-content row">
-                                <a href="article"><img src="{% static 'blog/images/posts/masonry/1.jpg' %}" class="img-responsive"></a>
-                            </div>
-                            <div class="post-excerpt row">
-                                <h5 class="post-meta">
-                                    <a href="#" class="date glyphicon glyphicon-sound-7-1"> {{ posts_list_data.modify_time|date:"Y-m-d" }}</a>
-                                    <span class="post-author"><i>作者:</i><a href="#">{{ posts_list_data.author }}</a></span>
-                                </h5>
-                                <h5 class="post-title"><a href="article">{{ posts_list_data.title }}</a></h5>
-                                <p>{{ posts_list_data.content|striptags|truncatechars:50}}</p>
-                                <footer class="row">
-                                    <span class="taxonomy"><a href="#">{{ posts_list_data.b_type }}</a></span>
-                                    <span class="pull-right glyphicon glyphicon-envelope">7</span>
-                                    <span class="pull-right glyphicon glyphicon-heart-empty">9&nbsp;</span>
-                                    <span class="pull-right glyphicon glyphicon-eye-open">5&nbsp;</span>
-                                </footer>
-                            </div>
+        <div class="container">
+            <div class="row" id="post-masonry" >
+            {% for posts_list_data in pag_of_posts.object_list %}
+                <article class="col-sm-4 post post-masonry post-format-image">
+                    <div class="post-wrapper row">
+                        <div class="featured-content row">
+                            <a href="article"><img src="{% static 'blog/images/posts/masonry/1.jpg' %}" class="img-responsive"></a>
                         </div>
-                    </article>
-                {% empty %}
-                    <aside class="col-sm-4 widget widget-twitter widget-with-posts post">
-                        <div class="widget-twitter-inner">
-                            <h5 class="widget-meta"><i class="glyphicon glyphicon-tasks"></i>暂无博客</h5>
-                            <div class="row tweet-texts">
-                                <p>敬请期待</p>
-                            </div>
-    	                    {#<div class="row timepast">1 day ago</div>#}
+                        <div class="post-excerpt row">
+                            <h5 class="post-meta">
+                                <a href="#" class="date glyphicon glyphicon-sound-7-1"> {{ posts_list_data.modify_time|date:"Y-m-d" }}</a>
+                                <span class="post-author"><i>作者:</i><a href="#">{{ posts_list_data.author }}</a></span>
+                            </h5>
+                            <h5 class="post-title"><a href="article">{{ posts_list_data.title }}</a></h5>
+                            <p>{{ posts_list_data.content|striptags|truncatechars:50}}</p>
+                            <footer class="row">
+                                <span class="taxonomy"><a href="#">{{ posts_list_data.b_type }}</a></span>
+                                <span class="pull-right glyphicon glyphicon-envelope">7</span>
+                                <span class="pull-right glyphicon glyphicon-heart-empty">9&nbsp;</span>
+                                <span class="pull-right glyphicon glyphicon-eye-open">5&nbsp;</span>
+                            </footer>
                         </div>
-                    </aside>
-                {% endfor %}
+                    </div>
+                </article>
+            {% empty %}
+                <aside class="col-sm-4 widget widget-twitter widget-with-posts post">
+                    <div class="widget-twitter-inner">
+                        <h5 class="widget-meta"><i class="glyphicon glyphicon-tasks"></i>暂无博客</h5>
+                        <div class="row tweet-texts">
+                            <p>敬请期待</p>
+                        </div>
+                        {#<div class="row timepast">1 day ago</div>#}
+                    </div>
+                </aside>
+            {% endfor %}
+            </div>
+                <div class="container ">
+                <nav aria-label="Page navigation">
+                  <ul class="pagination pull-right">
+                   {% if pag_of_posts.has_previous %}
+                       <li><a href="?page={{ pag_of_posts.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                   {% else %}{# 获取上一页 #}
+                        <li><span aria-hidden="true">&laquo;</span></li>
+                   {% endif %}
+                      {%  for page_num in page_range %}
+                          {% if page_num == pag_of_posts.number %}
+                              <li  class="active"><span>{{ page_num }}</span></li>
+                          {% else %}
+                              {% if page_num == "..." %}
+                                <li> <span>{{ page_num }}</span></li>
+                              {% else %}
+                                <li> <a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                              {% endif %}
+                          {% endif %}
+                      {% endfor %}
+                   {% if pag_of_posts.has_next %} {# 判断下一页是否存在 #}
+                       <li><a href="?page={{ pag_of_posts.next_page_number }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                   {% else %}{# 获取下一页 #}
+                        <li><span aria-hidden="true">&raquo;</span></li>
+                   {% endif %}
+                  </ul>
+                </nav>
             </div>
         </div>
 	</section>
-    <section class="row content-wrap ">
-        <div class="container ">
-            <nav aria-label="Page navigation">
-              <ul class="pagination pull-right">
-               {% if pag_of_posts.has_previous %}
-                   <li><a href="?page={{ pag_of_posts.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-               {% else %}{# 获取上一页 #}
-                    <li><span aria-hidden="true">&laquo;</span></li>
-               {% endif %}
-                  {%  for page_num in page_range %}
-                      {% if page_num == pag_of_posts.number %}
-                          <li  class="active"><span>{{ page_num }}</span></li>
-                      {% else %}
-                          {% if page_num == "..." %}
-                            <li> <span>{{ page_num }}</span></li>
-                          {% else %}
-                            <li> <a href="?page={{ page_num }}">{{ page_num }}</a></li>
-                          {% endif %}
-                      {% endif %}
-                  {% endfor %}
-               {% if pag_of_posts.has_next %} {# 判断下一页是否存在 #}
-                   <li><a href="?page={{ pag_of_posts.next_page_number }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-               {% else %}{# 获取下一页 #}
-                    <li><span aria-hidden="true">&raquo;</span></li>
-               {% endif %}
-              </ul>
-            </nav>
-        </div>
-    </section>
 {% endblock %}
