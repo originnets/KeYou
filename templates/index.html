@@ -66,17 +66,17 @@
                             <div class="row tweet-texts">
                                 <p>敬请期待</p>
                             </div>
-    {#	                    <div class="row timepast">1 day ago</div>#}
+    	                    {#<div class="row timepast">1 day ago</div>#}
                         </div>
                     </aside>
                 {% endfor %}
             </div>
         </div>
 	</section>
-    <section class="row2 content-wrap">
-        <div class="container">
+    <section class="row content-wrap ">
+        <div class="container ">
             <nav aria-label="Page navigation">
-              <ul class="pagination">
+              <ul class="pagination pull-right">
                {% if pag_of_posts.has_previous %}
                    <li><a href="?page={{ pag_of_posts.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
                {% else %}{# 获取上一页 #}
