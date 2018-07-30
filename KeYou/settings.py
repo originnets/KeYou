@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# 创建自定义用户模型
+AUTH_USER_MODEL = 'blog.User'
 
 # Application definition
 
@@ -121,3 +123,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+
+
+# 设置几篇文章分页
+EACH_PAGE_BLOG_NUMBER = 9
