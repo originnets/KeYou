@@ -4,10 +4,10 @@
     <div class="container">
         <div class="row top-header">
 			<div class="col-sm-2 logo-col">
-                <a href="index"><img src="{% static 'blog/images/logo-white-green.png' %}" alt=""></a>
+                <a href="{% url 'index' %}"><img src="{% static 'blog/images/logo-white-green.png' %}" alt=""></a>
             </div>
             <div class="col-sm-2 menu-trigger-col">
-                <a href="#" class="menu-trigger pull-right">	
+                <a href="{% url 'index' %}" class="menu-trigger pull-right">
                     <span class="active-page"><img src="{% static 'blog/images/menu-align-white.png' %}" alt="" class="icon-burger"> 博客</span>
                 </a>
             </div>

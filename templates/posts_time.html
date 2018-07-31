@@ -1,14 +1,14 @@
 ﻿{% extends "base/base_index.html" %}
 {% load staticfiles %}
-{% block title %}主页{% endblock %}
+{% block title %}归档{% endblock %}
 {% block posts_conten %}
 	<section class="row content-wrap">
         <div class="container">
             <div class="panel panel-default">
               <div class="panel-heading">
                   <ol class="breadcrumb ">
-                      <li>博客列表</li>
-                      <li class="taxonomy">一共{{ pag_of_posts.paginator.count }}博客</li>
+                      <li>日期归档:{{ posts_time }}</li>
+                      <li class="taxonomy"><a href="{% url 'index' %}"> 查看全部博客</a></li>
                   </ol>
               </div>
               <div class="panel-body">
@@ -21,7 +21,7 @@
                         </div>
                         <div class="post-excerpt row">
                             <h5 class="post-meta">
-                                <a href="{% url 'posts_time'  posts_list_data.modify_time|date:"Y"  posts_list_data.modify_time|date:"m" %}" class="date glyphicon glyphicon-sound-7-1"> {{ posts_list_data.modify_time|date:"Y-m-d" }}</a>
+                                <a class="date glyphicon glyphicon-sound-7-1"> {{ posts_list_data.modify_time|date:"Y-m-d" }}</a>
                                 <span class="post-author"><i>作者:</i><a href="#">{{ posts_list_data.author }}</a></span>
                             </h5>
                             <h5 class="post-title"><a href="{% url 'article' posts_list_data.id %}">{{ posts_list_data.title }}</a></h5>

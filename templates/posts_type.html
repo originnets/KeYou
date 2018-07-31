@@ -1,14 +1,14 @@
 ﻿{% extends "base/base_index.html" %}
 {% load staticfiles %}
-{% block title %}主页{% endblock %}
+{% block title %}分类{% endblock %}
 {% block posts_conten %}
 	<section class="row content-wrap">
         <div class="container">
             <div class="panel panel-default">
               <div class="panel-heading">
                   <ol class="breadcrumb ">
-                      <li>博客列表</li>
-                      <li class="taxonomy">一共{{ pag_of_posts.paginator.count }}博客</li>
+                      <li>分类{{ posts_category.type_name }}</li>
+                      <li class="taxonomy"><a href="{% url 'index' %}"> 查看全部博客</a></li>
                   </ol>
               </div>
               <div class="panel-body">
@@ -27,7 +27,7 @@
                             <h5 class="post-title"><a href="{% url 'article' posts_list_data.id %}">{{ posts_list_data.title }}</a></h5>
                             <p>{{ posts_list_data.content|striptags|truncatechars:50}}</p>
                             <footer class="row">
-                                <span class="taxonomy"><a href="{% url 'posts_type' posts_list_data.b_type.id %}">{{ posts_list_data.b_type }}</a></span>
+                                <span class="taxonomy">{{ posts_list_data.b_type }}</span>
                                 <span class="pull-right glyphicon glyphicon-envelope">7</span>
                                 <span class="pull-right glyphicon glyphicon-heart-empty">9&nbsp;</span>
                                 <span class="pull-right glyphicon glyphicon-eye-open">5&nbsp;</span>

@@ -2740,3 +2740,11 @@ textarea.form-control {
     padding-right: 0;
   }
 }
+
+.pull-center {
+  text-align: center !important;
+}
+
+.pull-left-70 {
+  margin-left: 70px !important;
+}

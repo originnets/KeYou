@@ -1,5 +1,8 @@
 from django.core.paginator import Paginator
 from django.db.models import Count
+from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
+
 
 from .models import Type, Posts
 from django.conf import settings
@@ -40,3 +43,22 @@ def get_posts_list_common_data(request, posts_list_datas):
     return_value['posts_categorys'] = posts_categorys
     return_value['posts_dates'] = posts_datas
     return return_value
+
+
+# 获取最热阅读
+
+# def read_statistics_once_read(request, obj):
+#     ct = ContentType.objects.get_for_model(obj)
+#     key = "%s_%s_read" % (ct.model, obj.id)
+#     if not request.COOKIES.get(key):
+#         #总阅读数量 +1
+#         readnum, created = ReadNum.objects.get_or_create(content_type=ct, object_id=obj.id)
+#         readnum.read_num += 1
+#         readnum.save()
+#
+#         #当天阅读数量 +1
+#         date = timezone.now().date()
+#         readdetail, created = ReadDetail.objects.get_or_create(content_type=ct, object_id=obj.id, date=date)
+#         readdetail.read_num += 1
+#         readdetail.save()
+#     return key

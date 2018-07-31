@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
 
 from django.conf import settings
 
@@ -17,7 +20,7 @@ class User(AbstractUser):
     class Meta(AbstractUser.Meta):
         pass
 
-# 定义Blog主表
+# 建立Blog模型
 
 
 class Type(models.Model):
@@ -45,3 +48,28 @@ class Posts(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# 建立评论模型
+
+
+class Comment(models.Model):
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    comment_text = models.TextField()
+    comment_time = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="comments", on_delete=models.CASCADE)
+
+    top_level = models.ForeignKey('self', null=True, related_name="top_level_comment", on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, related_name="rep_comment", on_delete=models.CASCADE)
+    rep_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="rep_list", null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.comment_text
+
+    class Meta:
+        ordering = ['comment_time']
+        verbose_name = "评论"
+        verbose_name_plural = "评论"
