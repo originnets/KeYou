@@ -47,6 +47,7 @@
                 </aside>
             {% endfor %}
             </div>
+              {% if  pag_of_posts.paginator.count > 9 %}
                 <div class="container pull-center">
                 <nav aria-label="Page navigation">
                   <ul class="pagination">
@@ -74,6 +75,7 @@
                   </ul>
                 </nav>
             </div>
+              {% endif %}
               </div>
             </div>
         </div>
