@@ -20,4 +20,5 @@ from blog import urls
 urlpatterns = [
     path('', include(urls)),
     path('admin/', admin.site.urls),
+    path('markdown', include('markdown.urls')),
 ]

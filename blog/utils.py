@@ -21,7 +21,10 @@ def get_posts_list_common_data(request, posts_list_datas):
     page_range = list(range(max(currentr_page_num - 2, 1), currentr_page_num)) + list \
         (range(currentr_page_num, min(currentr_page_num + 2, paginator.num_pages) + 1))
     posts_datas = Posts.objects.dates('publish_time', 'month', order='DESC')  # 获取数据并排序
-
+    posts_datas_dict = {}
+    for posts_date in posts_datas:
+        posts_count = Posts.objects.filter(status=1, publish_time__year=posts_date.year, publish_time__month=posts_date.month).count()
+        posts_datas_dict[posts_date] = posts_count
     # 加上省略页码标记
     if page_range[0] - 1 >= 2:
         page_range.insert(0, '...')

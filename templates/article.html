@@ -1,6 +1,9 @@
 ﻿{% extends "base/base2.html" %}
 {% load staticfiles %}
 {% block title %}博客详细{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'markdown/css/editormd.css' %}">
+{% endblock %}
 {% block content %}
 	<section class="row content-wrap">
 	    <div class="container">
@@ -18,9 +21,16 @@
 	                        <a href="#"><img src="{% static 'blog/images/posts/6.jpg' %}" alt=""></a>
 	                    </div>
 	                    <div class="post-content row">
-                            <div>
-                                {{ posts_detail_data.content }}
+                        <div id="layout">
+                            <header>
+                                <h3>{{ posts_detail_data.title }}</h3>
+                            </header>
+                            <div id="editormd">
+                                <textarea style="display:none;">
+                                   {{ posts_detail_data.content }}
+                                </textarea>
                             </div>
+                        </div>
 	                    <div class="row m0 tags">
                             <footer class="row ">
                                 <a href="#" class="tag">{{ posts_detail_data.b_type }}</a>
@@ -117,40 +127,59 @@
 	            <div class="col-md-4 sidebar">
 	                <!--Author Widget-->
 	                <aside class="row m0 widget-author widget">
-	                    <div class="widget-author-inner row">
-	                        <div class="author-avatar row"><a href="#"><img src="{% static 'blog/images/author.png' %}" alt="" class="img-circle"></a></div>
-	                        <a href="#"><h2 class="author-name">Mark Sanders</h2></a>
-	                        <h5 class="author-title">small title</h5>
-	                        <p>The word nature is derived from the Latin word natura, or "essential qualities, innate disposition", and in ancient times, literally meant "birth".</p>
-	                        <a href="#" class="know-more">know more</a>
+	                    <div class="widget-author-inner row ">
+	                        <div class="author-avatar row "><img src="{% static 'blog/images/author.png' %}" alt="" class="img-circle"></div>
+                            <h2 class="author-name"></h2>
+                            <h4 class="author-title">博客分类</h4>
 	                    </div>
-	                    <ul class="nav social-nav">
-	                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-	                        <li><a href="#"><i class="fa fa-facebook-official"></i></a></li>
-	                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-	                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-	                        <li><a href="#"><i class="fa fa-envelope"></i></a></li>
-	                    </ul>
 	                </aside>
-	                <!--Twitter Widget-->
+
 	                <aside class="row m0 widget widget-twitter">
-	                    <div class="widget-twitter-inner">
-	                        <h5 class="widget-meta"><i class="fa fa-twitter"></i>Twitter feed <a href="http://twitter.com/chivalricblog">@chivalricblog</a></h5>
-	                        <div class="row tweet-texts">
-	                            <p>Check out new post on my blog <a href="http://twitter.com/#natureshot">#natureshot</a> <a href="http://bit.ly/blog">http://bit.ly/blog</a></p>
-	                        </div>
-	                        <div class="row timepast">1 day ago</div>
+	                    <div class="widget-twitter-inner pull-center">
+                            {% for posts_category in posts_categorys %}
+                            <p><a class="taxonomy " href="{% url 'posts_type' posts_category.id %}">{{ posts_category.type_name }}({{ posts_category.posts_count }})</a></p>
+                            {% empty %}
+                                <h3><p>暂无分类</p></h3>
+                            {% endfor %}
 	                    </div>
 	                </aside>
-	                <!--Instagram Widget-->
-	                <aside class="row m0 widget widget-instagram">
-	                    <div class="widget-instagram-inner">
-	                        <h5 class="widget-meta"><i class="fa fa-twitter"></i>instagram feed <a href="http://twitter.com/chivalricblog">@chivalricblog</a></h5>
-	                        <div id="instafeed"></div>
+	                <aside class="row m0 widget-author widget">
+	                    <div class="widget-author-inner row ">
+	                        <div class="author-avatar row "><img src="{% static 'blog/images/author.png' %}" alt="" class="img-circle"></div>
+                            <h2 class="author-name"></h2>
+                            <h4 class="author-title">博客归档</h4>
+	                    </div>
+	                </aside>
+	                <aside class="row m0 widget widget-twitter">
+	                    <div class="widget-twitter-inner pull-center">
+                            {% for posts_data, posts_count in posts_datas.items %}
+                            <p><a class="taxonomy " href="{% url 'posts_time' posts_data.year posts_data.month %}">{{ posts_data | date:"Y年m月"}}({{ posts_count }})</a></p>
+                            {% empty %}
+                                <h3><p>暂无归档</p></h3>
+                            {% endfor %}
 	                    </div>
 	                </aside>
 	            </div>
 	        </div>
 	    </div>
 	</section>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'markdown/js/editormd.min.js' %}"></script>
+    <script src="{% static 'markdown/js/jquery.min.js' %}"></script>
+    <script type="text/javascript">
+        var Editor;
+        $(function() {
+            Editor = editormd("editormd", {
+                width   : "100%",
+                height  : 640,
+                syncScrolling : "single",
+                path    : "/static/markdown/lib/",
+                saveHTMLToTextarea : true,
+                /**上传图片相关配置如下*/
+                imageUpload : false,
+                //toolbar  : false,
+            });
+        });
+    </script>
 {% endblock %}

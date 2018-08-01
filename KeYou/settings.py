@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
+    'markdown'
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
 # 设置几篇文章分页
 EACH_PAGE_BLOG_NUMBER = 9
+
+# 设置markdown上传
+MARKDOWN_IMAGE_FLODER = 'markdown'
+
+# 设置markdown上传的格式
+MARKDOWN_IMAGE_FORMATS = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]

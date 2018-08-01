@@ -2,8 +2,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from django.db import models
 
 from .models import Type, Posts
+from markdown.widgets import AdminMarkdownWidget
 
 # 自定义User
 User = get_user_model()
@@ -29,5 +31,8 @@ class TypeAdmin(admin.ModelAdmin):
 
 @admin.register(Posts)
 class PostsAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMarkdownWidget()},
+    }
     list_display = ('id', 'title', 'author', 'b_type', 'publish_time', 'modify_time', 'status')
     ordering = ('id',)
