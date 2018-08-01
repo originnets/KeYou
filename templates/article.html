@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% block title %}博客详细{% endblock %}
 {% block css %}
-    <link rel="stylesheet" href="{% static 'markdown/css/editormd.css' %}">
     <link rel="stylesheet" href="{% static 'markdown/css/editormd.preview.css' %}">
 {% endblock %}
 {% block content %}
@@ -19,8 +18,11 @@
                         </header>
 	                    <div class="post-content row">
                         <div id="layout">
+                            <header>
+                                <h2 class="pull-center">{{ posts_detail_data.title }} </h2>
+                            </header>
                             <div id="editormd-view">
-                                <textarea style="display:none;">{{ posts_detail_data.content }}</textarea>
+                                <textarea  id="append" style="display:none;">{{ posts_detail_data.content }}</textarea>
                             </div>
                         </div>
 	                    <div class="row m0 tags">
@@ -169,7 +171,7 @@
         $(function() {
             var EditormdView;
            EditormdView = editormd.markdownToHTML("editormd-view", {
-                   // htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                    htmlDecode      : "style,script,iframe",  // you can filter tags decode
                     emoji           : true,
                     taskList        : true,
                     tex             : true,  // 默认不解析
