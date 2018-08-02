@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
-    'markdown'
+    'markdown',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +136,25 @@ MARKDOWN_IMAGE_FLODER = 'markdown'
 
 # 设置markdown上传的格式
 MARKDOWN_IMAGE_FORMATS = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
+
+#配置ckeditor
+CKEDITOR_UPLOAD_PATH = 'upload'
+
+CKEDITOR_CONFIGS = {
+    'default': {},
+    'comment_ckeditor': {
+        'toolbar': 'custom',
+        'toolbar_custom': [
+            ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'],
+            ["TextColor", "BGColor", 'RemoveFormat'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ["Smiley", "SpecialChar", 'Blockquote'],
+        ],
+        'width': 'auto',
+        'height': '180',
+        'tabSpaces': 4,
+        'removePlugins': 'elementspath',
+        'resize_enabled': False,
+    }
+}

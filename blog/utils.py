@@ -1,10 +1,12 @@
+import datetime
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
+from django.db.models import Sum
+from django.http import JsonResponse
 
-
-from .models import Type, Posts
+from .models import Type, Posts, ReadNum, ReadDetail
 from django.conf import settings
 
 
@@ -48,20 +50,43 @@ def get_posts_list_common_data(request, posts_list_datas):
     return return_value
 
 
-# 获取最热阅读
+# 阅读统计量
+def read_statistics_once_read(request, obj):
+    ct = ContentType.objects.get_for_model(obj)
+    key = "%s_%s_read" % (ct.model, obj.id)
+    if not request.COOKIES.get(key):
+        # 总阅读数量 +1
+        readnum, created = ReadNum.objects.get_or_create(content_type=ct, object_id=obj.id)
+        readnum.read_num += 1
+        readnum.save()
 
-# def read_statistics_once_read(request, obj):
-#     ct = ContentType.objects.get_for_model(obj)
-#     key = "%s_%s_read" % (ct.model, obj.id)
-#     if not request.COOKIES.get(key):
-#         #总阅读数量 +1
-#         readnum, created = ReadNum.objects.get_or_create(content_type=ct, object_id=obj.id)
-#         readnum.read_num += 1
-#         readnum.save()
-#
-#         #当天阅读数量 +1
-#         date = timezone.now().date()
-#         readdetail, created = ReadDetail.objects.get_or_create(content_type=ct, object_id=obj.id, date=date)
-#         readdetail.read_num += 1
-#         readdetail.save()
-#     return key
+        # 当天阅读数量 +1
+        date = timezone.now().date()
+        readdetail, created = ReadDetail.objects.get_or_create(content_type=ct, object_id=obj.id, date=date)
+        readdetail.read_num += 1
+        readdetail.save()
+    return key
+
+
+# 获取最近7的的热门评论
+def get_sevenday_hot_datas():
+    today = timezone.now().date()
+    data = today - datetime.timedelta(days=7)
+    posts = Posts.objects.filter(read_details__date__lte=today, read_details__date__gt=data).values('id', 'title').annotate(read_num_sum=Sum('read_details__read_num')).order_by('-read_num_sum')
+    return posts[:5]
+
+
+# 定义成功or失败的返回
+def ErrorResponse(code, message):
+    data = {}
+    data['status'] = 'ERROR'
+    data['code'] = code
+    data['message'] = message
+    return JsonResponse(data)
+
+
+def SuccessResponse(liked_num):
+    data = {}
+    data['status'] = 'SUCCESS'
+    data['liked_num'] = liked_num
+    return JsonResponse(data)

@@ -1,5 +1,6 @@
 ﻿{% extends "base/base_index.html" %}
 {% load staticfiles %}
+{% load likes_tags %}
 {% block title %}分类{% endblock %}
 {% block posts_conten %}
 	<section class="row content-wrap">
@@ -27,10 +28,10 @@
                             <h5 class="post-title"><a href="{% url 'article' posts_list_data.id %}">{{ posts_list_data.title }}</a></h5>
                             <p>{{ posts_list_data.content|striptags|truncatechars:50}}</p>
                             <footer class="row">
-                                <span class="taxonomy">{{ posts_list_data.b_type }}</span>
-                                <span class="pull-right glyphicon glyphicon-envelope">7</span>
-                                <span class="pull-right glyphicon glyphicon-heart-empty">9&nbsp;</span>
-                                <span class="pull-right glyphicon glyphicon-eye-open">5&nbsp;</span>
+                                <span class="taxonomy">分类标签:{{ posts_list_data.b_type }}</span>
+                                <span class="pull-right taxonomy">留言:7</span>
+                                <span class="pull-right taxonomy"> 点赞:{% get_like_count posts_list_data %}&nbsp;</span>
+                                <span class="pull-right taxonomy">阅读:{{ posts_list_data.get_read_num }}&nbsp;</span>
                             </footer>
                         </div>
                     </div>

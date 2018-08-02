@@ -1,7 +1,10 @@
 ﻿{% extends "base/base2.html" %}
 {% load staticfiles %}
+{% load likes_tags %}
+{% load comment_tags %}
 {% block title %}博客详细{% endblock %}
 {% block css %}
+    <link rel="stylesheet" href="{% static 'markdown/css/editormd.min.css' %}">
     <link rel="stylesheet" href="{% static 'markdown/css/editormd.preview.css' %}">
 {% endblock %}
 {% block content %}
@@ -12,7 +15,7 @@
 	                <article class="single-post-content row m0 post">
 	                    <header class="row">                        
 	                        <h5 class="post-meta">
-	                            <a href="#" class="date">{{ posts_detail_data.publish_time|date:"Y-m-d " }}</a>
+	                            <a href="{% url 'posts_time'  posts_detail_data.publish_time|date:"Y"  posts_detail_data.publish_time|date:"m" %}" class="date">{{ posts_detail_data.publish_time|date:"Y-m-d " }}</a>
 	                            <span class="post-author"><i>作者:</i><a href="#">{{ posts_detail_data.author}}</a></span>
 	                        </h5>
                         </header>
@@ -26,11 +29,14 @@
                             </div>
                         </div>
 	                    <div class="row m0 tags">
-                            <footer class="row ">
-                                <a href="#" class="tag">{{ posts_detail_data.b_type }}</a>
-                                <span class="pull-right tag">阅读量:7</span>
-                                <span class="pull-right tag">点赞:9</span>
-
+                            <footer class="row">
+                                <a href="{% url 'posts_type' posts_detail_data.b_type.id %}" class="tag">分类标签:{{ posts_detail_data.b_type }}</a>
+                                <div class="like pull-right tag" id="like">
+                                    <span id="like_status" class="glyphicon glyphicon-thumbs-up {% get_like_status posts_detail_data %} "></span>
+                                    <span id="like_num">{% get_like_count posts_detail_data %}</span>
+                                    <span >点赞</span>
+                                </div>
+                                <span class="pull-right tag">阅读:{{ posts_detail_data.get_read_num }}</span>
                             </footer>
 	                    </div>
 	                    <ul class="pager">
@@ -57,16 +63,35 @@
 	                    </ul>
 	                    
 	                    <div class="row m0 comments ">
-	                        <h5 class="response-count ">评论数量:5<a href="#comment-form" class="btn btn-primary pull-right"><span>添加评论</span></a></h5>
 	                        <!--Comments-->
 	                        <div class="media comment">
+                                <div class="comment-area ">
+                                    <form id="comment_form" action="{% url 'update_comment' %}" method="POST" style="overflow:hidden; margin-bottom: 10px">
+                                        <div class="taxonomy" style="margin-bottom: 10px"><h4>{{ request.user.username }}, 欢迎评论 | 当前评论数量为{% get_comment_count posts_detail_data %} </h4></div>
+                                    <div id="reply_cotent_container" style="display: none">
+                                        <div id="reply_cotent"></div>
+                                    </div >
+                                    <div class="pull-center">
+                                        {% csrf_token %}
+                                        {% get_comment_form posts_detail_data as comments_form %}
+                                        {% for field in comments_form %}
+                                            {{ field }}
+                                        {%  endfor %}
+                                        <span id="comment_error" class="text-danger pull-left"></span>
+                                            <h4 class="response-count taxonomy">
+                                                <a href="#comment-form" class="btn btn-primary pull-left ">添加评论</a>
+                                                <input type="submit" value="提交评论" class="btn btn-primary pull-right">
+                                            </h4>
+                                    </div>
+                                    </form>
+                                </div>
 	                            <div class="media-left">
 	                                <a href="#"><img src="{% static 'blog/images/posts/c1.jpg' %}" alt="" class="img-circle"></a>
 	                            </div>
 	                            <div class="media-body">
-	                                <h4><a href="#">Mark Sanders</a></h4>
-	                                <h5><a href="#" class="date">feb 17, 2016 at 3:30pm</a> | <a href="#" class="reply-link">reply</a></h5>
-	                                <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>                                
+	                                <h4><a href="#">{{ request.user.username }}</a></h4>
+	                                <h5><a href="#" class="date">{{ comment.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ comment.id }})" class="reply-link">回复</a></h5>
+	                                <p>{{ comment.text|safe }}</p>
 	                                <!--Comments-->
 	                                <div class="media comment reply">
 	                                    <div class="media-left">
@@ -119,17 +144,28 @@
                     </article>
 	            </div>
 	            <div class="col-md-4 sidebar">
-	                <!--Author Widget-->
 	                <aside class="row m0 widget-author widget">
-	                    <div class="widget-author-inner row ">
-	                        <div class="author-avatar row "><img src="{% static 'blog/images/author.png' %}" alt="" class="img-circle"></div>
+	                    <div class="widget-author-inner row pull-center">
                             <h2 class="author-name"></h2>
-                            <h4 class="author-title">博客分类</h4>
+                            <h4 class="author-title">最近七天热门TOP5</h4>
+                            {% for sevenday_hot_data in sevenday_hot_datas %}
+                            <p><a href="{% url 'article' sevenday_hot_data.id %}">{{ sevenday_hot_data.title }}({{ sevenday_hot_data.read_num_sum }})</a></p>
+                            {% empty %}
+                                <h3><p>最近七天暂无热门</p></h3>
+                            {% endfor %}
 	                    </div>
 	                </aside>
-
-	                <aside class="row m0 widget widget-twitter">
-	                    <div class="widget-twitter-inner pull-center">
+                    <aside class="row m0 widget-author widget">
+	                    <div class="widget-author-inner row ">
+                            <h2 class="author-name"></h2>
+                            <h4 class="author-title">目录</h4>
+                            <div class="markdown-body editormd-preview-container taxonomy" id="custom-toc-container"></div>
+	                    </div>
+	                </aside>
+	                <aside class="row m0 widget-author widget">
+	                    <div class="widget-author-inner row pull-center">
+                            <h2 class="author-name"></h2>
+                            <h4 class="author-title">博客分类标签</h4>
                             {% for posts_category in posts_categorys %}
                             <p><a class="taxonomy " href="{% url 'posts_type' posts_category.id %}">{{ posts_category.type_name }}({{ posts_category.posts_count }})</a></p>
                             {% empty %}
@@ -138,14 +174,9 @@
 	                    </div>
 	                </aside>
 	                <aside class="row m0 widget-author widget">
-	                    <div class="widget-author-inner row ">
-	                        <div class="author-avatar row "><img src="{% static 'blog/images/author.png' %}" alt="" class="img-circle"></div>
+	                    <div class="widget-author-inner row pull-center">
                             <h2 class="author-name"></h2>
                             <h4 class="author-title">博客归档</h4>
-	                    </div>
-	                </aside>
-	                <aside class="row m0 widget widget-twitter">
-	                    <div class="widget-twitter-inner pull-center">
                             {% for posts_data, posts_count in posts_datas.items %}
                             <p><a class="taxonomy " href="{% url 'posts_time' posts_data.year posts_data.month %}">{{ posts_data | date:"Y年m月"}}({{ posts_count }})</a></p>
                             {% empty %}
@@ -159,6 +190,7 @@
 	</section>
 {% endblock %}
 {% block js %}
+    <script src="{% static 'blog/js/jquery.cookie.js' %}"></script>
     <script src="{% static 'markdown/js/editormd.min.js' %}"></script>
     <script src="{% static 'markdown/lib/marked.min.js' %}"></script>
     <script src="{% static 'markdown/lib/prettify.min.js' %}"></script>
@@ -167,17 +199,58 @@
     <script src="{% static 'markdown/lib/sequence-diagram.min.js' %}"></script>
     <script src="{% static 'markdown/lib/flowchart.min.js' %}"></script>
     <script src="{% static 'markdown/lib/jquery.flowchart.min.js' %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
     <script type="text/javascript">
         $(function() {
             var EditormdView;
-           EditormdView = editormd.markdownToHTML("editormd-view", {
-                    htmlDecode      : "style,script,iframe",  // you can filter tags decode
-                    emoji           : true,
-                    taskList        : true,
-                    tex             : true,  // 默认不解析
-                    flowChart       : true,  // 默认不解析
-                    sequenceDiagram : true,  // 默认不解析
+            EditormdView = editormd.markdownToHTML("editormd-view", {
+                htmlDecode      : "style,script,iframe",
+                emoji           : true,
+                taskList        : true,
+                tex             : true,
+                flowChart       : true,
+                sequenceDiagram : true,
+                tocContainer    : "#custom-toc-container",
+                tocm   : true,
+                tocTitle      : "目录",
+            });
+            $("#like").click(function () {
+            var is_like = this.getElementsByClassName('active').length == 0;
+            $.ajax({
+                url: '{% url 'like_change' %}',
+                type: 'POST',
+                headers: {"X-CSRFToken":$.cookie('csrftoken')}, //防止django csrf报错,需要引入jquery-cookie
+                data: {
+                    content_type: "posts",
+                    object_id: {{ posts_detail_data.id }},
+                    is_like: is_like,
+                },
+                cache: false,
+                success: function (data) {
+                    console.log(data)
+                    if(data['status']=='SUCCESS'){
+                        if(is_like){
+                            $("#like_status").addClass('active');
+                        }else {
+                            $("#like_status").removeClass('active');
+                        }
+                        $("#like_num").text(data['liked_num']);
+
+                    }else {
+                        if(data['code'] == 400){
+                            $("#login_modal").modal('show');
+                        }else {
+                            alert(data['message']);
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr)
+                }
                 });
+            });
         });
+
     </script>
 {% endblock %}

@@ -9,4 +9,6 @@ urlpatterns = [
     path('time/<int:year>/<int:month>', views.posts_time, name='posts_time'),
     path('about', views.about, name='about'),
     path('contact', views.contact, name='contact'),
+    path('like_change', views.like_change, name='like_change'),
+    path('update_comment', views.update_comment, name='update_comment'),
 ]
