@@ -121,12 +121,12 @@ def update_comment(request):
     if comment_form.is_valid():
         comment = Comment()
         comment.user = comment_form.cleaned_data['user']
-        comment.text = comment_form.cleaned_data['comment_text']
+        comment.comment_text = comment_form.cleaned_data['comment_text']
         comment.content_object = comment_form.cleaned_data['content_obj']
 
         parent = comment_form.cleaned_data['parent']
-        if not parent is None:
-            comment.top_level = parent.top_level if not parent.top_level is None else parent
+        if parent is not None:
+            comment.top_level = parent.top_level if parent.top_level is not None else parent
             comment.parent = parent
             comment.rep_to = parent.user
         comment.save()
@@ -136,19 +136,20 @@ def update_comment(request):
         data['username'] = comment.user.username
         # data['comment_time'] = comment.comment_time.strftime('%Y-%m-%d %H:%M:%S')
         data['comment_time'] = comment.comment_time.timestamp()
-        data['text'] = comment.text
-        if not parent is None:
+        data['comment_text'] = comment.comment_text
+        if parent is not None:
             data['reply_to'] = comment.rep_to.username
         else:
             data['reply_to'] = ''
         data['id'] = comment.id
-        data['top_level'] = comment.top_level.id if not comment.top_level is None else ''
+        data['top_level'] = comment.top_level.id if comment.top_level is not None else ''
         # return redirect(referer)
     else:
         # return render(request, 'error.html', {'message': comment_form.errors, 'redirect_to': referer})
         data['status'] = 'ERROR'
         data['message'] = list(comment_form.errors.values())[0][0]
     return JsonResponse(data)
+
 
 def about(request):
     return render(request, 'about.html', )

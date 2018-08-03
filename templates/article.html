@@ -20,131 +20,110 @@
 	                        </h5>
                         </header>
 	                    <div class="post-content row">
-                        <div id="layout">
-                            <header>
-                                <h2 class="pull-center">{{ posts_detail_data.title }} </h2>
-                            </header>
-                            <div id="editormd-view">
-                                <textarea  id="append" style="display:none;">{{ posts_detail_data.content }}</textarea>
+                            <div id="layout">
+                                <header>
+                                    <h2 class="pull-center">{{ posts_detail_data.title }} </h2>
+                                </header>
+                                <div id="editormd-view">
+                                    <textarea  id="append" style="display:none;">{{ posts_detail_data.content }}</textarea>
+                                </div>
                             </div>
-                        </div>
-	                    <div class="row m0 tags">
-                            <footer class="row">
-                                <a href="{% url 'posts_type' posts_detail_data.b_type.id %}" class="tag">分类标签:{{ posts_detail_data.b_type }}</a>
-                                <div class="like pull-right tag" id="like">
-                                    <span id="like_status" class="glyphicon glyphicon-thumbs-up {% get_like_status posts_detail_data %} "></span>
-                                    <span id="like_num">{% get_like_count posts_detail_data %}</span>
-                                    <span >点赞</span>
-                                </div>
-                                <span class="pull-right tag">阅读:{{ posts_detail_data.get_read_num }}</span>
-                            </footer>
-	                    </div>
-	                    <ul class="pager">
-                            {%  if previous_posts %}
-                                <li>
-                                    <h4 class="taxonomy">上一篇:</h4>
-                                    <h5 class="post-title"><a href="{% url 'article' previous_posts.id %}">{{ previous_posts.title }}</a></h5>
-                                </li>
-                            {% else %}
-                                <li>
-                                    <h2>没有了</h2>
-                                </li>
-                            {% endif %}
-                            {%  if next_posts %}
-	                        <li>
-                                <h4 class="taxonomy">下一篇:</h4>
-                                <h5 class="post-title"><a href="{% url 'article' next_posts.id %}">{{ next_posts.title }}</a></h5>
-	                        </li>
-                            {% else %}
-                                <li>
-                                    <h2>没有了</h2>
-                                </li>
-                            {% endif %}
-	                    </ul>
-	                    
-	                    <div class="row m0 comments ">
-	                        <!--Comments-->
-	                        <div class="media comment">
-                                <div class="comment-area ">
-                                    <form id="comment_form" action="{% url 'update_comment' %}" method="POST" style="overflow:hidden; margin-bottom: 10px">
-                                        <div class="taxonomy" style="margin-bottom: 10px"><h4>{{ request.user.username }}, 欢迎评论 | 当前评论数量为{% get_comment_count posts_detail_data %} </h4></div>
-                                    <div id="reply_cotent_container" style="display: none">
-                                        <div id="reply_cotent"></div>
-                                    </div >
-                                    <div class="pull-center">
-                                        {% csrf_token %}
-                                        {% get_comment_form posts_detail_data as comments_form %}
-                                        {% for field in comments_form %}
-                                            {{ field }}
-                                        {%  endfor %}
-                                        <span id="comment_error" class="text-danger pull-left"></span>
-                                            <h4 class="response-count taxonomy">
-                                                <a href="#comment-form" class="btn btn-primary pull-left ">添加评论</a>
-                                                <input type="submit" value="提交评论" class="btn btn-primary pull-right">
-                                            </h4>
+                            <div class="row m0 tags">
+                                <footer class="row">
+                                    <a href="{% url 'posts_type' posts_detail_data.b_type.id %}" class="tag">分类标签:{{ posts_detail_data.b_type }}</a>
+                                    <div class="like pull-right tag" id="like">
+                                        <span id="like_status" class="glyphicon glyphicon-thumbs-up {% get_like_status posts_detail_data %} "></span>
+                                        <span id="like_num">{% get_like_count posts_detail_data %}</span>
+                                        <span >点赞</span>
                                     </div>
-                                    </form>
+                                    <span class="pull-right tag">阅读:{{ posts_detail_data.get_read_num }}</span>
+                                </footer>
+                            </div>
+                            <ul class="pager">
+                                {%  if previous_posts %}
+                                    <li>
+                                        <h4 class="taxonomy">上一篇:</h4>
+                                        <h5 class="post-title"><a href="{% url 'article' previous_posts.id %}">{{ previous_posts.title }}</a></h5>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <h2>没有了</h2>
+                                    </li>
+                                {% endif %}
+                                {%  if next_posts %}
+                                <li>
+                                    <h4 class="taxonomy">下一篇:</h4>
+                                    <h5 class="post-title"><a href="{% url 'article' next_posts.id %}">{{ next_posts.title }}</a></h5>
+                                </li>
+                                {% else %}
+                                    <li>
+                                        <h2>没有了</h2>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                                <form id="comment_form" action="{% url 'update_comment' %}" method="POST" style="overflow:hidden; margin-bottom: 10px">
+                                    <div class="taxonomy" style="margin-bottom: 10px"><h4>{{ request.user.username }}, 欢迎评论 | 当前评论数量为 {% get_comment_count posts_detail_data %} </h4></div>
+                                    <div id="reply_cotent_container" style="display: none">
+                                        <p>回复：</p>
+                                    <div id="reply_cotent"></div>
+                                </div >
+                                <div class="pull-center">
+                                    {% csrf_token %}
+                                    {% get_comment_form posts_detail_data as comments_form %}
+                                    {% for field in comments_form %}
+                                        {{ field }}
+                                    {%  endfor %}
+                                    <span id="comment_error" class="text-danger pull-left"></span>
+                                        <h4 class="response-count taxonomy">
+                                            <a href="#" class="btn btn-primary pull-left ">添加评论</a>
+                                            <input type="submit" value="提交评论" class="btn btn-primary pull-right">
+                                        </h4>
                                 </div>
-	                            <div class="media-left">
-	                                <a href="#"><img src="{% static 'blog/images/posts/c1.jpg' %}" alt="" class="img-circle"></a>
-	                            </div>
-	                            <div class="media-body">
-	                                <h4><a href="#">{{ request.user.username }}</a></h4>
-	                                <h5><a href="#" class="date">{{ comment.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ comment.id }})" class="reply-link">回复</a></h5>
-	                                <p>{{ comment.text|safe }}</p>
-	                                <!--Comments-->
-	                                <div class="media comment reply">
-	                                    <div class="media-left">
-	                                        <a href="#"><img src="{% static 'blog/images/posts/c2.jpg' %}" alt="" class="img-circle"></a>
-	                                    </div>
-	                                    <div class="media-body">
-	                                        <h4><a href="#">Mark Sanders</a></h4>
-	                                        <h5><a href="#" class="date">feb 17, 2016 at 3:30pm</a> | <a href="#" class="reply-link">reply</a></h5>
-	                                        <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-	                                        <!--Comments-->
-	                                        <div class="media comment reply">
-	                                            <div class="media-left">
-	                                                <a href="#"><img src="{% static 'blog/images/posts/c1.jpg' %}" alt="" class="img-circle"></a>
-	                                            </div>
-	                                            <div class="media-body">
-	                                                <h4><a href="#">Mark Sanders</a></h4>
-	                                                <h5><a href="#" class="date">feb 17, 2016 at 3:30pm</a> | <a href="#" class="reply-link">reply</a></h5>
-	                                                <p>Remaining essentially unchanged.</p>
-	                                                <!--Comments-->
-	                                                <div class="media comment reply">
-	                                                    <div class="media-left">
-	                                                        <a href="#"><img src="{% static 'blog/images/posts/c2.jpg' %}" alt="" class="img-circle"></a>
-	                                                    </div>
-	                                                    <div class="media-body">
-	                                                        <h4><a href="#">Mark Sanders</a></h4>
-	                                                        <h5><a href="#" class="date">feb 17, 2016 at 3:30pm</a> | <a href="#" class="reply-link">reply</a></h5>
-	                                                        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit</p>
-	                                                    </div>
-	                                                </div>
-	                                            </div>
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                            </div>
-	                                                
-	                        <!--Comments-->
-	                        <div class="media comment">
-	                            <div class="media-left">
-	                                <a href="#"><img src="{% static 'blog/images/posts/c1.jpg' %}" alt="" class="img-circle"></a>
-	                            </div>
-	                            <div class="media-body">
-	                                <h4><a href="#">Mark Sanders</a></h4>
-	                                <h5><a href="#" class="date">feb 17, 2016 at 3:30pm</a> | <a href="#" class="reply-link">reply</a></h5>
-	                                <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-	                            </div>
-	                        </div>
-	                    </div>
-	                    </div>
+                                </form>
+                            {% get_comment_list posts_detail_data as comments %}
+                            {% for comment in comments %}
+                            <div class="row m0 comments ">
+                                <!--Comments-->
+                                <div class="media-left">
+                                <a><img src="{% static 'blog/images/posts/c1.jpg' %}" alt="" class="img-circle"></a>
+                            </div>
+                            <div class="media-body" id="top_level_{{ comment.id }}">
+                                <h4><a class="taxonomy">{{ comment.user }}</a></h4>
+                                <h5><a class="date taxonomy">{{ comment.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ comment.id }})" class="reply-link taxonomy">回复</a></h5>
+                                <p id="comment_{{ comment.id }}">{{ comment.comment_text|safe }}</p>
+                                <!--Comments-->
+                                {%  for reply in comment.top_level_comment.all %}
+                                <div class="media comment reply">
+                                    <div class="media-left">
+                                        <a href="#"><img src="{% static 'blog/images/posts/c2.jpg' %}" alt="" class="img-circle"></a>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4><a class="taxonomy">{{ reply.user.username }}</a></h4>
+                                        <h5><a class="date taxonomy">{{ reply.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ reply.id }})" class="reply-link taxonomy" id="reply_title">回复</a></h5>
+                                        <span> {{ reply.reply_to.username }}</span>
+                                        <p id="comment_{{ reply.id }}">{{ reply.comment_text|safe }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            </div>
+                            {% empty %}
+                                <div class="row m0 comments taxonomy">
+                                    <h3><span id="no_comment"> 暂无评论</span></h3>
+                                </div>
+                            {% endfor %}
                         </div>
                     </article>
 	            </div>
 	            <div class="col-md-4 sidebar">
-	                <aside class="row m0 widget-author widget">
+                    <aside class="row m0 widget-author widget">
+	                    <div class="widget-author-inner row ">
+                            <h2 class="author-name"></h2>
+                            <h4 class="author-title">目录</h4>
+                            <div class="markdown-body editormd-preview-container taxonomy" id="custom-toc-container"></div>
+	                    </div>
+	                </aside>
+                    <aside class="row m0 widget-author widget">
 	                    <div class="widget-author-inner row pull-center">
                             <h2 class="author-name"></h2>
                             <h4 class="author-title">最近七天热门TOP5</h4>
@@ -153,13 +132,6 @@
                             {% empty %}
                                 <h3><p>最近七天暂无热门</p></h3>
                             {% endfor %}
-	                    </div>
-	                </aside>
-                    <aside class="row m0 widget-author widget">
-	                    <div class="widget-author-inner row ">
-                            <h2 class="author-name"></h2>
-                            <h4 class="author-title">目录</h4>
-                            <div class="markdown-body editormd-preview-container taxonomy" id="custom-toc-container"></div>
 	                    </div>
 	                </aside>
 	                <aside class="row m0 widget-author widget">
@@ -251,6 +223,77 @@
                 });
             });
         });
+        function numFormat(num) {
+            return('00' + num).substr(-2);
+        }
+
+       function timeFormmat(timestamp) {
+            var datetime = new Date(timestamp * 1000) ;
+            var year = datetime.getFullYear();
+            var month = numFormat(datetime.getMonth() + 1);
+            var day = numFormat(datetime.getDay());
+            var hour = numFormat(datetime.getHours());
+            var minute = numFormat(datetime.getMinutes());
+            var second = numFormat(datetime.getSeconds());
+            return year + '-' + month + '-' + day + ' ' +  hour + ':' + minute + ':' + second
+        }
+        $("#comment_form").submit(function(){
+            // 判断是否为空
+            $("#comment_error").text('');
+            if(CKEDITOR.instances["id_text"].document.getBody().getText().trim()==''){
+                $("#comment_error").text('评论内容不能为空');
+                return false;
+            }
+
+            // 更新数据到textarea
+            CKEDITOR.instances['id_text'].updateElement();
+
+            // 异步提交
+            $.ajax({
+                url: "{% url 'update_comment' %}",
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    console.log(data);
+                    if(data['status']=="SUCCESS"){
+                        // 插入数据
+
+                        if($('#reply_comment_id').val()=='0'){
+                            //插入评论
+                            var comment_html = '<div  id="top_level_ ' + data['id'] +'" class="well well-lg"><span>'+ data['username'] + '</span><span>('+ timeFormmat(data['comment_time']) + ')：</span><div id="comment_'+ data['id'] + '"><span>'+ data['text'] + '</span> </div> <a href="javascript:reply('+ data['id'] + ')">回复</a> </div>';
+                            $("#comment_list").prepend(comment_html);
+                        }else{
+                            //插入回复
+                           var reply_html = '<div class="well well-lg"><span>'+ data['username'] + '</span><span>('+ timeFormmat(data['comment_time']) + '):</span><span>回复</span><span> '+ data['reply_to)'] + '</span><div id="comment_'+ data['id'] + '"><span>'+ data['text'] + '</span></div><a href="javascript:reply('+ data['id'] + ')">回复</a></div>';
+                            $("#top_level_"+ data['top_level']).append(reply_html)
+                        }
+                        // 清空编辑框的内容
+                        CKEDITOR.instances['id_text'].setData('');
+                        $('#reply_cotent_container').hide();
+                        $('#reply_comment_id').val('0');
+                        $('#no_comment').remove();
+                        $("#comment_error").text('评论成功');
+                    }else{
+                        // 显示错误信息
+                        $("#comment_error").text(data['message']);
+                    }
+                },
+                error: function(xhr){
+                    console.log(xhr);
+                }
+            });
+            return false;
+        });
+        function reply(reply_comment_id) {
+            $('#reply_comment_id').val(reply_comment_id);
+            var html = $("#comment_" + reply_comment_id).html();
+            $('#reply_cotent').html(html);
+            $('#reply_cotent_container').show()
+            $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
+                CKEDITOR.instances['id_text'].focus()
+            });
+        }
 
     </script>
 {% endblock %}

@@ -3,7 +3,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import ObjectDoesNotExist
 
 from ckeditor.widgets import CKEditorWidget
-from ckeditor.widgets import CKEditorWidget
 from .models import Comment
 
 
