@@ -64,7 +64,7 @@
                                 <form id="comment_form" action="{% url 'update_comment' %}" method="POST" style="overflow:hidden; margin-bottom: 10px">
                                     <div class="taxonomy" style="margin-bottom: 10px"><h4>{{ request.user.username }}, 欢迎评论 | 当前评论数量为 {% get_comment_count posts_detail_data %} </h4></div>
                                     <div id="reply_cotent_container" style="display: none">
-                                        <p>回复：</p>
+                                        <p>回复:</p>
                                     <div id="reply_cotent"></div>
                                 </div >
                                 <div class="pull-center">
@@ -80,10 +80,10 @@
                                         </h4>
                                 </div>
                                 </form>
+                            <div id="comment_list">
                             {% get_comment_list posts_detail_data as comments %}
                             {% for comment in comments %}
                             <div class="row m0 comments ">
-                                <!--Comments-->
                                 <div class="media-left">
                                 <a><img src="{% static 'blog/images/posts/c1.jpg' %}" alt="" class="img-circle"></a>
                             </div>
@@ -112,6 +112,7 @@
                                     <h3><span id="no_comment"> 暂无评论</span></h3>
                                 </div>
                             {% endfor %}
+                            </div>
                         </div>
                     </article>
 	            </div>
@@ -240,13 +241,13 @@
         $("#comment_form").submit(function(){
             // 判断是否为空
             $("#comment_error").text('');
-            if(CKEDITOR.instances["id_text"].document.getBody().getText().trim()==''){
+            if(CKEDITOR.instances["id_comment_text"].document.getBody().getText().trim()==''){
                 $("#comment_error").text('评论内容不能为空');
                 return false;
             }
 
             // 更新数据到textarea
-            CKEDITOR.instances['id_text'].updateElement();
+            CKEDITOR.instances['id_comment_text'].updateElement();
 
             // 异步提交
             $.ajax({
@@ -261,15 +262,15 @@
 
                         if($('#reply_comment_id').val()=='0'){
                             //插入评论
-                            var comment_html = '<div  id="top_level_ ' + data['id'] +'" class="well well-lg"><span>'+ data['username'] + '</span><span>('+ timeFormmat(data['comment_time']) + ')：</span><div id="comment_'+ data['id'] + '"><span>'+ data['text'] + '</span> </div> <a href="javascript:reply('+ data['id'] + ')">回复</a> </div>';
+                            var comment_html = '<div class="row m0 comments "><div class="media-left"><a><img src="{% static 'blog/images/posts/c1.jpg' %}" alt="" class="img-circle"></a></div><div class="media-body" id="top_level_ ' + data['id'] + ' "> <h4><a class="taxonomy">'+ data['username'] + '</a></h4> <h5><a class="date taxonomy">'+ timeFormmat(data['comment_time']) + '</a> | <a href="javascript:reply('+ data['id'] + ')" class="reply-link taxonomy">回复</a></h5> <p id="comment_'+ data['id'] + '">'+ data['comment_text'] + '</p></div>';
                             $("#comment_list").prepend(comment_html);
                         }else{
                             //插入回复
-                           var reply_html = '<div class="well well-lg"><span>'+ data['username'] + '</span><span>('+ timeFormmat(data['comment_time']) + '):</span><span>回复</span><span> '+ data['reply_to)'] + '</span><div id="comment_'+ data['id'] + '"><span>'+ data['text'] + '</span></div><a href="javascript:reply('+ data['id'] + ')">回复</a></div>';
+                           var reply_html = '<div class="media comment reply"><div class="media-left"><a href="#"><img src="{% static 'blog/images/posts/c2.jpg' %}" alt="" class="img-circle"></a></div><div class="media-body" id="top_level_ ' + data['id'] + ' "> <h4><a class="taxonomy">'+ data['username'] + '</a></h4> <h5><a class="date taxonomy">'+ timeFormmat(data['comment_time']) + '</a> | <a href="javascript:reply('+ data['id'] + ')" class="reply-link taxonomy">回复</a></h5> <p id="comment_'+ data['id'] + '">'+ data['comment_text'] + '</p></div>';
                             $("#top_level_"+ data['top_level']).append(reply_html)
                         }
                         // 清空编辑框的内容
-                        CKEDITOR.instances['id_text'].setData('');
+                        CKEDITOR.instances['id_comment_text'].setData('');
                         $('#reply_cotent_container').hide();
                         $('#reply_comment_id').val('0');
                         $('#no_comment').remove();
@@ -291,7 +292,7 @@
             $('#reply_cotent').html(html);
             $('#reply_cotent_container').show()
             $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
-                CKEDITOR.instances['id_text'].focus()
+                CKEDITOR.instances['id_comment_text'].focus()
             });
         }
 
