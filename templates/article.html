@@ -64,8 +64,8 @@
                                 <form id="comment_form" action="{% url 'update_comment' %}" method="POST" style="overflow:hidden; margin-bottom: 10px">
                                     <div class="taxonomy" style="margin-bottom: 10px"><h4>{{ request.user.username }}, 欢迎评论 | 当前评论数量为 {% get_comment_count posts_detail_data %} </h4></div>
                                     <div id="reply_cotent_container" style="display: none">
-                                        <p>回复:</p>
-                                    <div id="reply_cotent"></div>
+                                        <p>回复: <span id="reply_cotent"></span></p>
+
                                 </div >
                                 <div class="pull-center">
                                     {% csrf_token %}
@@ -73,7 +73,7 @@
                                     {% for field in comments_form %}
                                         {{ field }}
                                     {%  endfor %}
-                                    <span id="comment_error" class="text-danger pull-left"></span>
+                                    <div id="comment_error" class="text-danger pull-left"></div>
                                         <h4 class="response-count taxonomy">
                                             <a href="#" class="btn btn-primary pull-left ">添加评论</a>
                                             <input type="submit" value="提交评论" class="btn btn-primary pull-right">
@@ -90,7 +90,7 @@
                             <div class="media-body" id="top_level_{{ comment.id }}">
                                 <h4><a class="taxonomy">{{ comment.user }}</a></h4>
                                 <h5><a class="date taxonomy">{{ comment.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ comment.id }})" class="reply-link taxonomy">回复</a></h5>
-                                <p id="comment_{{ comment.id }}">{{ comment.comment_text|safe }}</p>
+                                <div id="comment_{{ comment.id }}">{{ comment.comment_text|safe }}</div>
                                 <!--Comments-->
                                 {%  for reply in comment.top_level_comment.all %}
                                 <div class="media comment reply">
@@ -101,7 +101,7 @@
                                         <h4><a class="taxonomy">{{ reply.user.username }}</a></h4>
                                         <h5><a class="date taxonomy">{{ reply.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ reply.id }})" class="reply-link taxonomy" id="reply_title">回复</a></h5>
                                         <span> {{ reply.reply_to.username }}</span>
-                                        <p id="comment_{{ reply.id }}">{{ reply.comment_text|safe }}</p>
+                                        <div id="comment_{{ reply.id }}">{{ reply.comment_text|safe }}</div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -288,7 +288,7 @@
         });
         function reply(reply_comment_id) {
             $('#reply_comment_id').val(reply_comment_id);
-            var html = $("#comment_" + reply_comment_id).html();
+            var html = $("#comment_" + reply_comment_id).find('p').html();
             $('#reply_cotent').html(html);
             $('#reply_cotent_container').show()
             $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
