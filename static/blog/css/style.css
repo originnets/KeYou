@@ -2759,3 +2759,11 @@ div.like {
 div.like .active{
     color: #f22;
 }
+
+.pull-right {
+  margin-right: 20px;
+}
+
+.pull-top {
+  margin-top: -4px;
+}

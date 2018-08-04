@@ -6,19 +6,33 @@
 			<div class="col-sm-2 logo-col">
                 <a href="{% url 'index' %}"><img src="{% static 'blog/images/logo-white-green.png' %}" alt=""></a>
             </div>
-            <div class="col-sm-2 menu-trigger-col">
+            <div class="col-sm-6 menu-trigger-col">
                 <a href="{% url 'index' %}" class="menu-trigger pull-right">
-                    <span class="active-page"><img src="{% static 'blog/images/menu-align-white.png' %}" alt="" class="icon-burger"> 博客</span>
+                    <span class="active-page"><img src="{% static 'blog/images/menu-align-white.png' %}" alt="" class="icon-burger">&nbsp;&nbsp;博客</span>
                 </a>
             </div>
-            <div class="col-sm-5 search-form-col">
-                <form action="#" method="get" class="search-form">
-                    <div class="input-group">
-                        <span class="input-group-addon"><img src="{% static 'blog/images/search-icon-white.png' %}" alt=""></span>
-                        <input type="search" class="form-control" placeholder="搜 索">
-                    </div>
-                </form>
+            <div class="col-sm-pull menu-trigger-col nav navbar-nav navbar-right  pull-top">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'index' %}" class="menu-trigger pull-right">
+                        <span class="active-page pull-right">注册</span>
+                    </a>
+                    <a href="{% url 'index' %}" class="menu-trigger pull-right ">
+                        <span class="active-page ">登录</span>
+                    </a>
+                    {% else %}
+                        <li nav navbar-nav navbar-right>
+                        <img class="img-circle" src="{% static "blog/images/author.png" %}" alt="头像"  style="height: 45px"/>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle menu-trigger pull-right " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu black">
+                                <li><a >个人资料</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a >退出</a></li>
+                            </ul>
+                        </li>
+                {% endif %}
             </div>
-        </div>        
+        </div>
     </div>
 </header>
