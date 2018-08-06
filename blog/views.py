@@ -172,10 +172,6 @@ def login(request):
             user = login_form.cleaned_data['user']
             auth.login(request, user)  # 登陆
             return redirect(request.GET.get('from', reverse('index')))
-    else:
-        login_form = LoginForm()
-    return_value['login_form'] = login_form
-    return render(request, 'login.html', return_value,)
 
 
 def register(request):
@@ -195,10 +191,6 @@ def register(request):
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
             return redirect(request.GET.get('from', reverse('home')))
-    else:
-        reg_form = RegForm()
-    return_value['reg_form'] = reg_form
-    return render(request, 'register.html', return_value,)
 
 
 def logout(request):

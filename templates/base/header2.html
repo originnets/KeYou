@@ -13,12 +13,12 @@
             </div>
             <div class="col-sm-pull menu-trigger-col nav navbar-nav navbar-right pull-top">
                 {% if not user.is_authenticated %}
-                    <a href="{% url 'index' %}" class="menu-trigger black pull-right">
-                        <span class="active-page pull-right">注册</span>
-                    </a>
-                    <a href="{% url 'index' %}" class="menu-trigger black pull-right ">
-                        <span class="active-page ">登录</span>
-                    </a>
+                    <button class="menu-trigger black pull-right">
+                        <span class="active-page pull-right" id="new_register">注册</span>
+                    </button>
+                    <button class="menu-trigger black pull-right ">
+                        <span class="active-page " id="new_login">登录</span>
+                    </button>
                     {% else %}
                         <li>
                         <img class="img-circle" src="{% static "blog/images/author.png" %}" alt="头像"  style="height: 45px"/>
@@ -35,4 +35,6 @@
             </div>
         </div>
     </div>
+    {% include "login.html" %}
+    {% include "register.html" %}
 </header>
