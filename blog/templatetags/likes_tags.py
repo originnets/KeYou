@@ -1,6 +1,6 @@
 from django import template
 from django.contrib.contenttypes.models import ContentType
-from ..models import LikeCount, LikeRecord, Comment
+from ..models import LikeCount, LikeRecord
 
 
 register = template.Library()

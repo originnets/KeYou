@@ -31,6 +31,7 @@
                             <div class="row m0 tags">
                                 <footer class="row">
                                     <a href="{% url 'posts_type' posts_detail_data.b_type.id %}" class="tag">分类标签:{{ posts_detail_data.b_type }}</a>
+
                                     <div class="like pull-right tag" id="like">
                                         <span id="like_status" class="glyphicon glyphicon-thumbs-up {% get_like_status posts_detail_data %} "></span>
                                         <span id="like_num">{% get_like_count posts_detail_data %}</span>
@@ -84,10 +85,15 @@
                                     </div>
                                     </form>
                                 {% else %}
-                                    <h4>请登录，登录后才能评论</h4>
-{#                                    <a class="btn btn-primary" href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a>#}
-{#                                    <span> or </span>#}
-{#                                    <a class="btn btn-danger" href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a>#}
+                                    <div class="pull-right">
+                                    <span><h4 class="pagination ">请登录，登录后才能评论</h4></span>
+                                        <div class="pagination">
+                                            <a class="btn btn-default" id="login">登录</a>
+                                            <span> or </span>
+                                            <a class="btn btn-danger" id="register">注册</a>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
                                 {% endif %}
 
                             <div id="comment_list">
@@ -99,7 +105,11 @@
                             </div>
                             <div class="media-body" id="top_level_{{ comment.id }}">
                                 <h4><a class="taxonomy">{{ comment.user }}</a></h4>
+                                {% if request.user.is_authenticated %}
                                 <h5><a class="date taxonomy">{{ comment.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ comment.id }})" class="reply-link taxonomy">回复</a></h5>
+                                {% else %}
+                                <h5><a class="date taxonomy">{{ comment.comment_time|date:"Y-m-d H:i:s" }}</a></h5>
+                                {% endif %}
                                 <div id="comment_{{ comment.id }}">{{ comment.comment_text|safe }}</div>
                                 <!--Comments-->
                                 {%  for reply in comment.top_level_comment.all %}
@@ -109,7 +119,11 @@
                                     </div>
                                     <div class="media-body">
                                         <h4><a class="taxonomy">{{ reply.user.username }}</a></h4>
+                                        {% if request.user.is_authenticated %}
                                         <h5><a class="date taxonomy">{{ reply.comment_time|date:"Y-m-d H:i:s" }}</a> | <a href="javascript:reply({{ reply.id }})" class="reply-link taxonomy" id="reply_title">回复</a></h5>
+                                        {% else %}
+                                         <h5><a class="date taxonomy">{{ reply.comment_time|date:"Y-m-d H:i:s" }}</a></h5>
+                                        {% endif %}
                                         <span> {{ reply.reply_to.username }}</span>
                                         <div id="comment_{{ reply.id }}">{{ reply.comment_text|safe }}</div>
                                     </div>
@@ -124,7 +138,61 @@
                             {% endfor %}
                             </div>
                         </div>
+{#                        登录模态对话框#}
+                        <div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                            <form id="login_medal_form" action="" method="post">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">登录</h4>
+                              </div>
+                              <div class="modal-body">
+                                    {% csrf_token %}
+                                    {% get_comment_form posts_detail_data as comments_form %}
+
+                                    {%  for field in login_form %}
+                                        <label for="{{ field.id_for_label }}">{{ field.label}}</label>
+                                        {{ field }}
+                                        <p class="text-danger">{{ field.errors.as_text }}</p>
+                                    {% endfor %}
+                                    <span id="login_modal_tip" class="text-danger"></span>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="submit" class="btn btn-danger">登录</button>
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                              </div>
+                            </form>
+                            </div>
+                          </div>
                     </article>
+{#                        注册模态对话框#}
+                        <div class="modal fade" id="reg_modal" tabindex="-1" role="dialog">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                            <form id="reg_medal_form" action="" method="post">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">登录</h4>
+                              </div>
+                              <div class="modal-body">
+                                    {% csrf_token %}
+                                    {%  for field in reg_form %}
+                                        <label for="{{ field.id_for_label }}">{{ field.label}}</label>
+                                        {{ field }}
+                                        <p class="text-danger">{{ field.errors.as_text }}</p>
+                                    {% endfor %}
+                                    <span id="reg_modal_tip" class="text-danger"></span>
+                              </div>
+                              <div class="modal-footer">
+                                  <span class="pull-left text-danger">{{ login_form.non_field_errors }}</span>
+                                  <button type="submit" class="btn btn-danger">注册</button>
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                              </div>
+                            </form>
+                            </div>
+                          </div>
+                        </div>
 	            </div>
 	            <div class="col-md-4 sidebar">
                     <aside class="row m0 widget-author widget">
@@ -211,7 +279,6 @@
                 },
                 cache: false,
                 success: function (data) {
-                    console.log(data)
                     if(data['status']=='SUCCESS'){
                         if(is_like){
                             $("#like_status").addClass('active');
@@ -309,5 +376,26 @@
                 CKEDITOR.instances['id_comment_text'].focus()
             });
         }
+        $("#login_medal_form").submit(function () {
+            $.ajax({
+               url: "{% url "login" %}",
+               type: "POST",
+               data: $(this).serialize(),
+               cache: false,
+               success: function (data) {
+                    window.location.reload();
+               } ,
+               error: function (xhr) {
+                    $('#login_medal_form').text('用户名或密码错误')
+               },
+            });
+            return false;
+        })
+        $('#login').click(function () {
+            $("#login_modal").modal('show');
+        })
+        $('#register').click(function () {
+            $("#reg_modal").modal('show');
+        })
     </script>
 {% endblock %}

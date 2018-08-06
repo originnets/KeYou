@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 from blog import views
 
 urlpatterns = [
@@ -11,4 +11,7 @@ urlpatterns = [
     path('contact', views.contact, name='contact'),
     path('like_change', views.like_change, name='like_change'),
     path('update_comment', views.update_comment, name='update_comment'),
+    path('login', views.login, name='login'),
+    path('register', views.register, name='register'),
+    path('logout', views.logout, name='logout'),
 ]

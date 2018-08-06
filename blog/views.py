@@ -10,7 +10,7 @@ from django.core.paginator import Paginator
 from django.contrib import auth
 
 from .models import Type, Posts, LikeRecord, LikeCount, Comment
-from .forms import CommentForm
+from .forms import CommentForm, LoginForm, RegForm
 from .utils import get_posts_list_common_data, get_sevenday_hot_datas, read_statistics_once_read, ErrorResponse, SuccessResponse
 
 # 自定义User模型
@@ -18,6 +18,12 @@ User = get_user_model()
 
 # 定义返回字典
 return_value = {}
+
+# 定义login_form表单显示
+return_value['login_form'] = LoginForm()
+
+# 定义reg_form表单显示
+return_value['reg_form'] = RegForm()
 
 
 def index(request):
@@ -157,3 +163,44 @@ def about(request):
 
 def contact(request):
     return render(request, 'contact.html', )
+
+
+def login(request):
+    if request.method == "POST":
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            user = login_form.cleaned_data['user']
+            auth.login(request, user)  # 登陆
+            return redirect(request.GET.get('from', reverse('index')))
+    else:
+        login_form = LoginForm()
+    return_value['login_form'] = login_form
+    return render(request, 'login.html', return_value,)
+
+
+def register(request):
+    if request.method == "POST":
+        reg_form = RegForm(request.POST, request=request)
+        if reg_form.is_valid():
+            username = reg_form.cleaned_data['username']
+            email = reg_form.cleaned_data['email']
+            request.user.email = email
+            password = reg_form.cleaned_data['password']
+            # 创建用户
+            new_user = User.objects.create_user(username, email, password)
+            new_user.save()
+            # 清除session
+            del request.session['register_code']
+            # 登陆用户
+            user = auth.authenticate(username=username, password=password)
+            auth.login(request, user)
+            return redirect(request.GET.get('from', reverse('home')))
+    else:
+        reg_form = RegForm()
+    return_value['reg_form'] = reg_form
+    return render(request, 'register.html', return_value,)
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect(request.GET.get('from', reverse('index')))
