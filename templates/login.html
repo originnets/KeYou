@@ -1,3 +1,4 @@
+{% load login_or_register_tages %}
 {#                        登录模态对话框#}
 <div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -9,14 +10,16 @@
       </div>
       <div class="modal-body">
             {% csrf_token %}
+            {% get_login as login_form %}
             {%  for field in login_form %}
                 <label for="{{ field.id_for_label }}">{{ field.label}}</label>
                 {{ field }}
                 <p class="text-danger">{{ field.errors.as_text }}</p>
             {% endfor %}
-            <span id="login_modal_tip" class="text-danger"></span>
+            <span id="login_modal_tip" class="text-danger">{{ login_form.non_field_errors }}</span>
       </div>
       <div class="modal-footer">
+{#          <a href="{% url 'forgot_password' %}" class="pull-left">忘记密码</a>#}
           <button type="submit" class="btn btn-danger">登录</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
       </div>
@@ -24,3 +27,6 @@
     </div>
   </div>
 </div>
+<script>
+
+</script>

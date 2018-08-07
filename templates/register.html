@@ -1,3 +1,4 @@
+{% load login_or_register_tages %}
 {#                        注册模态对话框#}
 <div class="modal fade" id="reg_modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -9,6 +10,7 @@
       </div>
       <div class="modal-body">
             {% csrf_token %}
+            {% get_register as reg_form %}
             {%  for field in reg_form %}
                 <label for="{{ field.id_for_label }}">{{ field.label}}</label>
                 {{ field }}

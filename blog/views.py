@@ -6,30 +6,26 @@ from django.core.cache import cache
 from django.db.models import ObjectDoesNotExist
 from django.urls import reverse
 from django.http import JsonResponse
-from django.core.paginator import Paginator
 from django.contrib import auth
+import string, random, time
+from django.core.mail import send_mail
 
 from .models import Type, Posts, LikeRecord, LikeCount, Comment
-from .forms import CommentForm, LoginForm, RegForm
+from .forms import CommentForm, LoginForm, RegForm, ChangNickNameForm, BindEmailForm, ChangePasswordForm, ForgotPasswordForm
 from .utils import get_posts_list_common_data, get_sevenday_hot_datas, read_statistics_once_read, ErrorResponse, SuccessResponse
 
 # 自定义User模型
 User = get_user_model()
 
 # 定义返回字典
-return_value = {}
-
-# 定义login_form表单显示
-return_value['login_form'] = LoginForm()
-
-# 定义reg_form表单显示
-return_value['reg_form'] = RegForm()
+contexts = {}
 
 
 def index(request):
+
     posts_list_datas = Posts.objects.filter(status=1).all()
-    return_value = get_posts_list_common_data(request, posts_list_datas)
-    return render(request, 'index.html', return_value)
+    contexts = get_posts_list_common_data(request, posts_list_datas)
+    return render(request, 'index.html', contexts)
 
 
 def article(request, aid):
@@ -49,13 +45,13 @@ def article(request, aid):
         if hot_posts_for_seven_days is None:
             hot_posts_for_seven_days = get_sevenday_hot_datas()
             cache.set('hot_posts_for_seven_days', hot_posts_for_seven_days, 3600)
-        return_value['posts_detail_data'] = posts_detail_data
-        return_value['previous_posts'] = previous_posts
-        return_value['next_posts'] = next_posts
-        return_value['posts_categorys'] = posts_categorys
-        return_value['posts_datas'] = posts_datas_dict
-        return_value['sevenday_hot_datas'] = hot_posts_for_seven_days
-        response = render(request, 'article.html', return_value,)
+            contexts['posts_detail_data'] = posts_detail_data
+            contexts['previous_posts'] = previous_posts
+            contexts['next_posts'] = next_posts
+            contexts['posts_categorys'] = posts_categorys
+            contexts['posts_datas'] = posts_datas_dict
+            contexts['sevenday_hot_datas'] = hot_posts_for_seven_days
+        response = render(request, 'article.html', contexts,)
         response.set_cookie(read_cookie_key, 'ture')
         return response
 
@@ -63,16 +59,16 @@ def article(request, aid):
 def posts_type(request, tid):
     posts_list_datas = Posts.objects.filter(status=1, b_type__id=tid)
     posts_category = Type.objects.filter(id=tid).first()
-    return_value = get_posts_list_common_data(request, posts_list_datas)
-    return_value['posts_category'] = posts_category
-    return render(request, 'posts_type.html', return_value,)
+    contexts = get_posts_list_common_data(request, posts_list_datas)
+    contexts['posts_category'] = posts_category
+    return render(request, 'posts_type.html', contexts,)
 
 
 def posts_time(request, year, month):
     posts_list_datas = Posts.objects.filter(status=1, publish_time__year=year, publish_time__month=month)
-    return_value = get_posts_list_common_data(request, posts_list_datas)
-    return_value['posts_time'] = '%s年%s月' % (year, month)
-    return render(request, "posts_time.html", return_value, )
+    contexts = get_posts_list_common_data(request, posts_list_datas)
+    contexts['posts_time'] = '%s年%s月' % (year, month)
+    return render(request, "posts_time.html", contexts, )
 
 
 def like_change(request):
@@ -193,6 +189,127 @@ def register(request):
             return redirect(request.GET.get('from', reverse('home')))
 
 
+def change_nickname(request):
+    redirect_to = request.GET.get('from', reverse('home'))
+    if request.method == "POST":
+        form = ChangNickNameForm(request.POST, user=request.user)
+        if form.is_valid():
+            nickname_new = form.cleaned_data['nickname_new']
+            profile, created = User.objects.get_or_create(user=request.user)
+            profile.nickname = nickname_new
+            profile.save()
+            return redirect(redirect_to)
+    else:
+        form = ChangNickNameForm()
+
+    contexts = {}
+    contexts['form'] = form
+    contexts['page_title'] = "修改昵称"
+    contexts['form_title'] = "修改昵称"
+    contexts['submit_text'] = "修改"
+    contexts['return_back_url'] = redirect_to
+    return render(request, 'base/form.html', contexts)
+
+
+def bind_email(request):
+    redirect_to = request.GET.get('from', reverse('home'))
+    if request.method == "POST":
+        form = BindEmailForm(request.POST, request=request)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            request.user.email = email
+            request.user.save()
+            # 清除session
+            del request.session['bind_email_code']
+            return redirect(redirect_to)
+    else:
+        form = BindEmailForm()
+
+    contexts['form'] = form
+    contexts['page_title'] = "绑定邮箱"
+    contexts['form_title'] = "绑定邮箱"
+    contexts['submit_text'] = "绑定"
+    contexts['return_back_url'] = redirect_to
+    return render(request, 'bind_email.html', contexts)
+
+
+def send_verification_code(request):
+    email = request.GET.get('email', '')
+    send_for = request.GET.get('send_for', '')
+    data = {}
+    if email != '':
+        # 生成验证码
+        code = ''.join(random.sample(string.ascii_letters + string.digits, 6))
+        now = int(time.time())
+        send_code_time = request.session.get('send_code_time', 0)
+        if now - send_code_time < 30:
+            data['status'] = 'ERROR'
+        else:
+            request.session[send_for] = code
+            request.session['send_code_time'] = now
+            # 发送邮件
+            send_mail(
+                '绑定邮箱',
+                '你好：%s \n 你的验证码为: %s' % (email, code),
+                '1421863463@qq.com',
+                [email],
+                fail_silently=False,
+            )
+            data['status'] = 'SUCCESS'
+    else:
+        data['status'] = 'ERROR'
+    return JsonResponse(data)
+
+
+def change_password(request):
+    redirect_to = reverse('home')
+    if request.method == "POST":
+        form = ChangePasswordForm(request.POST, user=request.user)
+        if form.is_valid():
+            user = request.user
+            #old_password = form.cleaned_data['old_password']
+            new_password = form.cleaned_data['new_password_again']
+            user.set_password(new_password)
+            user.save()
+            request.user.save
+            auth.logout(request)
+            return redirect(redirect_to)
+    else:
+        form = ChangePasswordForm()
+
+    contexts['form'] = form
+    contexts['page_title'] = "修改密码"
+    contexts['form_title'] = "修改密码"
+    contexts['submit_text'] = "修改"
+    contexts['return_back_url'] = redirect_to
+    return render(request, 'base/form.html', contexts)
+
+
+def forgot_password(request):
+    redirect_to = reverse('login')
+    if request.method == "POST":
+        form = ForgotPasswordForm(request.POST, request=request)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            new_password = form.cleaned_data['new_password']
+            user = User.objects.get(email=email)
+            user.set_password(new_password)
+            user.save()
+            # 清除session
+            del request.session['forgot_password_code']
+            return redirect(redirect_to)
+    else:
+        form = ForgotPasswordForm()
+
+    contexts['form'] = form
+    contexts['page_title'] = "重置密码"
+    contexts['form_title'] = "重置密码"
+    contexts['submit_text'] = "重置"
+    contexts['return_back_url'] = redirect_to
+    return render(request, 'forgot_password.html', contexts)
+
+
 def logout(request):
     auth.logout(request)
     return redirect(request.GET.get('from', reverse('index')))
+

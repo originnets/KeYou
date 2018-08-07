@@ -6,12 +6,13 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.http import JsonResponse
 
+
 from .models import Type, Posts, ReadNum, ReadDetail
 from django.conf import settings
 
 
 # 定义返回字典
-return_value = {}
+contexts = {}
 
 
 # 获取分页数据
@@ -43,11 +44,11 @@ def get_posts_list_common_data(request, posts_list_datas):
     posts_categorys = Type.objects.annotate(posts_count=Count('posts'))
 
     # 定义返回
-    return_value['pag_of_posts'] = pag_of_posts
-    return_value['page_range'] = page_range
-    return_value['posts_categorys'] = posts_categorys
-    return_value['posts_dates'] = posts_datas
-    return return_value
+    contexts['pag_of_posts'] = pag_of_posts
+    contexts['page_range'] = page_range
+    contexts['posts_categorys'] = posts_categorys
+    contexts['posts_dates'] = posts_datas
+    return contexts
 
 
 # 阅读统计量
@@ -90,3 +91,4 @@ def SuccessResponse(liked_num):
     data['status'] = 'SUCCESS'
     data['liked_num'] = liked_num
     return JsonResponse(data)
+
