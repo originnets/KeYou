@@ -23,11 +23,11 @@
 		<!-- 加载header1 -->
 		{% include "base/header2.html"%}
 
-        <!-- 加载login对话框  -->
-        {% include "login.html" %}
-
-        <!-- 加载register对话框  -->
-        {% include "register.html" %}
+{#        <!-- 加载login对话框  -->#}
+{#        {% include "login.html" %}#}
+{##}
+{#        <!-- 加载register对话框  -->#}
+{#        {% include "register.html" %}#}
 
 		<!-- 加载content -->
 		{% block content %} {% endblock %}
@@ -44,7 +44,7 @@
 		<script src="{% static 'blog/vendors/imagesLoaded/imagesloaded.pkgd.min.js' %}"></script>
 		<script src="{% static 'blog/vendors/isotope/isotope.pkgd.min.js' %}"></script>
 		<script src="{% static 'blog/js/theme.js' %}"></script>
-        <script src="{% static 'blog/js/style.js' %}"></script>
+{#        <script src="{% static 'blog/js/style.js' %}"></script>#}
 		{% block js %} {% endblock %}
 	</body>
 </html>

@@ -14,10 +14,10 @@
             <div class="col-sm-pull menu-trigger-col nav navbar-nav navbar-right  pull-top">
                 {% if not user.is_authenticated %}
                     <button class="menu-trigger pull-right ">
-                        <span class="active-page " id="new_login">登录</span>
+                        <a href="{% url "login" %}" class="active-page " id="new_login">登录</a>
                     </button>
                     <button class="menu-trigger pull-right">
-                        <span class="active-page pull-right " id="new_register">注册</span>
+                        <a href="{% url "register" %}" class="active-page pull-right " id="new_register">注册</a>
                     </button>
                     {% else %}
                         <li nav navbar-nav navbar-right>

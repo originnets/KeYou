@@ -21,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
-    list_display = ('avatar', 'username', 'nickname', 'email', 'is_staff', 'is_active', 'is_superuser')
+    list_display = ('id', 'avatar', 'username', 'nickname', 'email', 'is_staff', 'is_active', 'is_superuser')
 
 
 # 在后台注册Type

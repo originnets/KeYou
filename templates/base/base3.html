@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- 加载title -->
+		<title>{% block title %} {% endblock %}</title>
+
+		<!-- 加载css -->
+		<link rel="stylesheet" href="{% static 'blog/css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'blog/css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'blog/css/templatemo_style.css' %}">
+		<link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
+		<link href="{% static 'blog/css/theme/green.css' %}" rel="stylesheet">
+		{% block css %} {% endblock %}
+	</head>
+<body class="templatemo-bg-image-1">
+		<!-- 加载header1 -->
+{#		{% include "base/header1.html"%}#}
+        <!-- 加载content -->
+		{% block content %} {% endblock %}
+        <!-- 加载footer -->
+{#		{% include "base/footer.html" %}#}
+        {% block js %} {% endblock %}
+</body>
+</html>

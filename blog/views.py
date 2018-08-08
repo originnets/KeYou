@@ -22,7 +22,6 @@ contexts = {}
 
 
 def index(request):
-
     posts_list_datas = Posts.objects.filter(status=1).all()
     contexts = get_posts_list_common_data(request, posts_list_datas)
     return render(request, 'index.html', contexts)
@@ -168,6 +167,9 @@ def login(request):
             user = login_form.cleaned_data['user']
             auth.login(request, user)  # 登陆
             return redirect(request.GET.get('from', reverse('index')))
+    login_form = LoginForm()
+    contexts['login_form'] = login_form
+    return render(request, 'login.html', contexts, )
 
 
 def register(request):
@@ -187,6 +189,10 @@ def register(request):
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
             return redirect(request.GET.get('from', reverse('home')))
+    else:
+        reg_form = RegForm()
+        contexts['reg_form'] = reg_form
+    return render(request, 'register.html', contexts, )
 
 
 def change_nickname(request):

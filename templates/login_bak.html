@@ -1,0 +1,31 @@
+{% load base_form_tages %}
+{#                        登录模态对话框#}
+<div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    <form id="login_medal_form" action="" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">登录</h4>
+      </div>
+      <div class="modal-body">
+            {% csrf_token %}
+            {% get_login as login_form %}
+            {%  for field in login_form %}
+                <label for="{{ field.id_for_label }}">{{ field.label}}</label>
+                {{ field }}
+                <p class="text-danger">{{ field.errors.as_text }}</p>
+            {% endfor %}
+            <span id="login_modal_tip" class="text-danger">{{ login_form.non_field_errors }}</span>
+      </div>
+      <div class="modal-footer">
+          <a type="button"  href="{% url 'forgot_password' %}" class="btn btn-default pull-left">忘记密码</a>
+          <button type="submit" class="btn btn-danger">登录</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<script>
+</script>

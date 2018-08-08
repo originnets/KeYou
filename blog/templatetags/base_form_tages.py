@@ -1,6 +1,7 @@
 from django import template
 
-from ..forms import LoginForm, RegForm
+from ..views import forgot_password
+from ..forms import LoginForm, RegForm, ForgotPasswordForm
 register = template.Library()
 
 
@@ -12,3 +13,8 @@ def get_login():
 @register.simple_tag
 def get_register():
     return RegForm()
+
+
+@register.simple_tag
+def get_forgotpassword():
+    return ForgotPasswordForm()
