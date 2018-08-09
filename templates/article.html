@@ -78,8 +78,8 @@
                                         <div id="comment_error" class="text-danger"></div>
                                         <div>
                                             <h4 class="response-count taxonomy">
-                                                <a  class="btn btn-primary pull-left " id="refresh">添加评论</a>
-                                                <input type="submit" value="提交评论" class="btn btn-primary pull-right">
+                                                <a  class="btn btn-warning pull-left " id="refresh">添加评论</a>
+                                                <input type="submit" value="提交评论" class="btn btn-danger pull-right">
                                             </h4>
                                         </div>
                                     </div>
@@ -88,9 +88,9 @@
                                     <div class="pull-right">
                                     <span><h4 class="pagination ">请登录，登录后才能评论</h4></span>
                                         <div class="pagination">
-                                            <a class="btn btn-default" id="login">登录</a>
+                                            <a class="btn btn-default" href="{% url "login" %}">登录</a>
                                             <span> or </span>
-                                            <a class="btn btn-danger" id="register">注册</a>
+                                            <a class="btn btn-danger" href="{% url "register" %}">注册</a>
                                         </div>
                                     </div>
                                     <div class="clearfix"></div>
@@ -137,6 +137,31 @@
                                 </div>
                             {% endfor %}
                             </div>
+                        </div>
+                        <div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                <form id="login_medal_form" action="" method="post">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">登录</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                        {% csrf_token %}
+                                        {%  for field in login_form %}
+                                            <label for="{{ field.id_for_label }}">{{ field.label}}</label>
+                                            {{ field }}
+                                            <p class="text-danger">{{ field.errors.as_text }}</p>
+                                        {% endfor %}
+                                        <span id="login_modal_tip" class="text-danger"></span>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="submit" class="btn btn-danger">登录</button>
+                                      <button type="button" class="btn btn-warning" data-dismiss="modal">关闭</button>
+                                  </div>
+                                </form>
+                                </div>
+                              </div>
                         </div>
                     </article>
                 </div>
@@ -196,9 +221,9 @@
     <script src="{% static 'markdown/lib/sequence-diagram.min.js' %}"></script>
     <script src="{% static 'markdown/lib/flowchart.min.js' %}"></script>
     <script src="{% static 'markdown/lib/jquery.flowchart.min.js' %}"></script>
-    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
-    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-    <script type="text/javascript">
+    <script src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <script>
         $(function() {
             var EditormdView;
             EditormdView = editormd.markdownToHTML("editormd-view", {
@@ -254,7 +279,6 @@
         function numFormat(num) {
             return('00' + num).substr(-2);
         }
-
        function timeFormmat(timestamp) {
             var datetime = new Date(timestamp * 1000) ;
             var year = datetime.getFullYear();
@@ -322,5 +346,21 @@
                 CKEDITOR.instances['id_comment_text'].focus()
             });
         }
+
+         $("#login_medal_form").submit(function () {
+            $.ajax({
+               url: "{% url "login" %}",
+               type: "POST",
+               data: $(this).serialize(),
+               cache: false,
+               success: function (data) {
+                    window.location.reload();
+               } ,
+               error: function (xhr) {
+                    $('#login_medal_form').text('用户名或密码错误')
+               },
+            });
+            return false;
+        })
     </script>
 {% endblock %}

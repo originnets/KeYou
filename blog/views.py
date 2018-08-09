@@ -28,31 +28,32 @@ def index(request):
 
 
 def article(request, aid):
-        posts_detail_data = get_object_or_404(Posts, status=1, id=aid)
-        previous_posts = Posts.objects.filter(status=1, publish_time__gt=posts_detail_data.publish_time).last()
-        next_posts = Posts.objects.filter(status=1, publish_time__lt=posts_detail_data.publish_time).first()
-        posts_categorys = Type.objects.annotate(posts_count=Count('posts'))
-        read_cookie_key = read_statistics_once_read(request, posts_detail_data)
-        posts_datas = Posts.objects.dates('publish_time', 'month', order='DESC')
-        posts_datas_dict = {}
-        for posts_date in posts_datas:
-            posts_count = Posts.objects.filter(status=1, publish_time__year=posts_date.year,
-                                               publish_time__month=posts_date.month).count()
-            posts_datas_dict[posts_date] = posts_count
+    posts_detail_data = get_object_or_404(Posts, status=1, id=aid)
+    previous_posts = Posts.objects.filter(status=1, publish_time__gt=posts_detail_data.publish_time).last()
+    next_posts = Posts.objects.filter(status=1, publish_time__lt=posts_detail_data.publish_time).first()
+    posts_categorys = Type.objects.annotate(posts_count=Count('posts'))
+    read_cookie_key = read_statistics_once_read(request, posts_detail_data)
+    posts_datas = Posts.objects.dates('publish_time', 'month', order='DESC')
+    posts_datas_dict = {}
+    for posts_date in posts_datas:
+        posts_count = Posts.objects.filter(status=1, publish_time__year=posts_date.year,
+                                           publish_time__month=posts_date.month).count()
+        posts_datas_dict[posts_date] = posts_count
 
-        hot_posts_for_seven_days = cache.get('hot_posts_for_seven_days')
-        if hot_posts_for_seven_days is None:
-            hot_posts_for_seven_days = get_sevenday_hot_datas()
-            cache.set('hot_posts_for_seven_days', hot_posts_for_seven_days, 3600)
-            contexts['posts_detail_data'] = posts_detail_data
-            contexts['previous_posts'] = previous_posts
-            contexts['next_posts'] = next_posts
-            contexts['posts_categorys'] = posts_categorys
-            contexts['posts_datas'] = posts_datas_dict
-            contexts['sevenday_hot_datas'] = hot_posts_for_seven_days
-        response = render(request, 'article.html', contexts,)
-        response.set_cookie(read_cookie_key, 'ture')
-        return response
+    hot_posts_for_seven_days = cache.get('hot_posts_for_seven_days')
+    if hot_posts_for_seven_days is None:
+        hot_posts_for_seven_days = get_sevenday_hot_datas()
+        cache.set('hot_posts_for_seven_days', hot_posts_for_seven_days, 3600)
+    contexts['posts_detail_data'] = posts_detail_data
+    contexts['previous_posts'] = previous_posts
+    contexts['next_posts'] = next_posts
+    contexts['posts_categorys'] = posts_categorys
+    contexts['posts_datas'] = posts_datas_dict
+    contexts['sevenday_hot_datas'] = hot_posts_for_seven_days
+    contexts['login_form'] = LoginForm()
+    response = render(request, 'article.html', contexts, )
+    response.set_cookie(read_cookie_key, 'ture')
+    return response
 
 
 def posts_type(request, tid):
@@ -167,7 +168,8 @@ def login(request):
             user = login_form.cleaned_data['user']
             auth.login(request, user)  # 登陆
             return redirect(request.GET.get('from', reverse('index')))
-    login_form = LoginForm()
+    else:
+        login_form = LoginForm()
     contexts['login_form'] = login_form
     return render(request, 'login.html', contexts, )
 
@@ -188,10 +190,10 @@ def register(request):
             # 登陆用户
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
-            return redirect(request.GET.get('from', reverse('home')))
+            return redirect(request.GET.get('from', reverse('index')))
     else:
         reg_form = RegForm()
-        contexts['reg_form'] = reg_form
+    contexts['reg_form'] = reg_form
     return render(request, 'register.html', contexts, )
 
 
@@ -268,7 +270,7 @@ def send_verification_code(request):
 
 
 def change_password(request):
-    redirect_to = reverse('home')
+    redirect_to = reverse('index')
     if request.method == "POST":
         form = ChangePasswordForm(request.POST, user=request.user)
         if form.is_valid():
@@ -288,7 +290,7 @@ def change_password(request):
     contexts['form_title'] = "修改密码"
     contexts['submit_text'] = "修改"
     contexts['return_back_url'] = redirect_to
-    return render(request, 'base/form.html', contexts)
+    return render(request, 'change_password.html', contexts)
 
 
 def forgot_password(request):

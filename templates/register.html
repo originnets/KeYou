@@ -2,7 +2,8 @@
 {% block title %}注册{% endblock %}
 {% block content %}
 	<div class="container">
-		<div class="col-md-12">
+		<div class="col-md-12 margin-top-160">
+        {% if not user.is_authenticated %}
 			<form class="form-horizontal templatemo-login-form-2" role="form" action="#" method="post">
                 {% csrf_token %}
 				<div class="row">
@@ -22,7 +23,7 @@
                                         {{ field }}
                                         <p class="text-danger">{{ field.errors.as_text }}</p>
                                     {% endfor %}
-                                <span id="login_modal_tip" class="pull-left text-danger">{{ login_form.non_field_errors }}</span>
+                                <span id="login_modal_tip" class="pull-left text-danger">{{ reg_form.non_field_errors }}</span>
                                 <div class="clearfix"></div>
                             </div>
 				        </div>
@@ -36,9 +37,65 @@
 				        		<input type="submit" value="注册" class="btn btn-danger">
 				       	 	</div>
 				    	</div>
+                        <div class="form-group">
+				          	<div class="col-md-12">
+				        		<a href="{% url "login" %}" class="text-center pull-right">返回登录</a>
+				       	 	</div>
+				    	</div>
 					</div>
 				</div>
 		      </form>
-		</div>
+        {% else %}
+            <h2>已登录，跳转到首页中...</h2>
+            <script >
+                setTimeout(jump,1000);
+                function jump(){
+                    window.location.href="/";
+                }
+            </script>
+        {% endif %}
+    </div>
 	</div>
+{% endblock %}
+{% block js %}
+<script >
+    $("#send_reg_code").click(function () {
+        var email = $("#id_email").val();
+        if(email==""){
+            $("#error-tip").text('* 邮箱不能为空');
+            return false;
+        }
+        //发送验证码
+        $.ajax({
+            url: "{% url 'send_verification_code' %}",
+            type: "GET",
+            data: {
+                'email': email,
+                'send_for': 'register_code',
+            },
+            cache: false,
+            success: function (data) {
+                if (data['status']=='ERROR'){
+                    alert(data['status']);
+                }
+            }
+        });
+        //把按钮变灰
+        $(this).addClass('disabled');
+        $(this).attr('disabled', true);
+        $(this).text(time + 's');
+        var time = 30;
+        var interval = setInterval(() => {
+            if (time <= 0){
+                clearInterval(interval);
+                $(this).removeClass('disabled');
+                $(this).attr('disabled', false);
+                $(this).text('发送验证码');
+                return false;
+            }
+            time --;
+            $(this).text(time + 's');
+        }, 1000);
+    })
+</script>
 {% endblock %}

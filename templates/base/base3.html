@@ -19,11 +19,14 @@
 	</head>
 <body class="templatemo-bg-image-1">
 		<!-- 加载header1 -->
-{#		{% include "base/header1.html"%}#}
+		{% include "base/header1.html"%}
         <!-- 加载content -->
 		{% block content %} {% endblock %}
         <!-- 加载footer -->
-{#		{% include "base/footer.html" %}#}
+{#        <div class="container" style="margin-bottom: 20px">#}
+{#            <h5 class="copyright">Copyright &copy; 2018<a target="_blank" href="#"> 个人网站</a></h5>#}
+{#        </div>#}
+        <script src="{% static 'blog/js/jquery-2.2.0.min.js' %}"></script>
         {% block js %} {% endblock %}
 </body>
 </html>

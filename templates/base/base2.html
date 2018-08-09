@@ -14,20 +14,14 @@
 		<link rel="stylesheet" href="{% static 'blog/css/font-awesome.min.css' %}">
 		<link rel="stylesheet" href="{% static 'blog/vendors/owl-carousel/assets/owl.carousel.css' %}">
 		<link rel="stylesheet" href="{% static 'blog/vendors/magnific-popup/magnific-popup.css' %}">
-		<link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
-		<link href="{% static 'blog/css/theme/green.css' %}" rel="stylesheet">
+		<link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'blog/css/theme/green.css' %}" >
 		{% block css %} {% endblock %}
 	</head>
 	<body class="home">
 		
 		<!-- 加载header1 -->
 		{% include "base/header2.html"%}
-
-{#        <!-- 加载login对话框  -->#}
-{#        {% include "login.html" %}#}
-{##}
-{#        <!-- 加载register对话框  -->#}
-{#        {% include "register.html" %}#}
 
 		<!-- 加载content -->
 		{% block content %} {% endblock %}
@@ -44,7 +38,6 @@
 		<script src="{% static 'blog/vendors/imagesLoaded/imagesloaded.pkgd.min.js' %}"></script>
 		<script src="{% static 'blog/vendors/isotope/isotope.pkgd.min.js' %}"></script>
 		<script src="{% static 'blog/js/theme.js' %}"></script>
-{#        <script src="{% static 'blog/js/style.js' %}"></script>#}
 		{% block js %} {% endblock %}
 	</body>
 </html>

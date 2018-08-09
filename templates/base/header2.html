@@ -14,10 +14,10 @@
             <div class="col-sm-pull menu-trigger-col nav navbar-nav navbar-right pull-top">
                 {% if not user.is_authenticated %}
                     <button class="menu-trigger black pull-right ">
-                        <span class="active-page " id="new_login">登录</span>
+                        <a class="active-page " href="{% url 'login' %}">登录</a>
                     </button>
                     <button class="menu-trigger black pull-right">
-                        <span class="active-page pull-right" id="new_register">注册</span>
+                        <a class="active-page pull-right" href="{% url 'register' %}">注册</a>
                     </button>
                     {% else %}
                         <li>
@@ -27,6 +27,8 @@
                             <a href="#" class="dropdown-toggle menu-trigger black" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user }} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a >个人资料</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{% url "forgot_password" %}">修改密码</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="{% url 'logout' %}">退出</a></li>
                             </ul>
