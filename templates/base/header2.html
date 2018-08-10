@@ -14,21 +14,25 @@
             <div class="col-sm-pull menu-trigger-col nav navbar-nav navbar-right pull-top">
                 {% if not user.is_authenticated %}
                     <button class="menu-trigger black pull-right ">
-                        <a class="active-page " href="{% url 'login' %}">登录</a>
+                        <a class="active-page " href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a>
                     </button>
                     <button class="menu-trigger black pull-right">
-                        <a class="active-page pull-right" href="{% url 'register' %}">注册</a>
+                        <a class="active-page pull-right" href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a>
                     </button>
                     {% else %}
                         <li>
                         <img class="img-circle" src="{% static "blog/images/author.png" %}" alt="头像"  style="height: 45px"/>
                         </li>
                         <li class="active dropdown">
-                            <a href="#" class="dropdown-toggle menu-trigger black" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user }} <span class="caret"></span></a>
+                            <a class="dropdown-toggle menu-trigger black" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user }} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a >个人资料</a></li>
+                                {%  if user.is_stadd or user.is_superuser %}
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="{% url "admin:index" %}">管理后台</a></li>
+                                {% endif %}
                                 <li role="separator" class="divider"></li>
-                                <li><a href="{% url "forgot_password" %}">修改密码</a></li>
+                                <li><a href="{% url "change_password" %}">修改密码</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="{% url 'logout' %}">退出</a></li>
                             </ul>

@@ -198,7 +198,7 @@ def register(request):
 
 
 def change_nickname(request):
-    redirect_to = request.GET.get('from', reverse('home'))
+    redirect_to = request.GET.get('from', reverse('index'))
     if request.method == "POST":
         form = ChangNickNameForm(request.POST, user=request.user)
         if form.is_valid():
@@ -210,7 +210,6 @@ def change_nickname(request):
     else:
         form = ChangNickNameForm()
 
-    contexts = {}
     contexts['form'] = form
     contexts['page_title'] = "修改昵称"
     contexts['form_title'] = "修改昵称"
@@ -220,7 +219,7 @@ def change_nickname(request):
 
 
 def bind_email(request):
-    redirect_to = request.GET.get('from', reverse('home'))
+    redirect_to = request.GET.get('from', reverse('index'))
     if request.method == "POST":
         form = BindEmailForm(request.POST, request=request)
         if form.is_valid():

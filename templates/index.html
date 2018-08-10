@@ -1,5 +1,6 @@
 ﻿{% extends "base/base_index.html" %}
 {% load staticfiles %}
+{% load comment_tags %}
 {% load likes_tags %}
 {% block title %}主页{% endblock %}
 {% block posts_conten %}
@@ -29,7 +30,7 @@
                             <p>{{ posts_list_data.content|striptags|truncatechars:50}}</p>
                             <footer class="row">
                                 <span class="taxonomy"><a href="{% url 'posts_type' posts_list_data.b_type.id %}">分类标签:{{ posts_list_data.b_type }}</a></span>
-                                <span class="pull-right taxonomy">留言:7</span>
+                                <span class="pull-right taxonomy">留言:{% get_comment_count posts_list_data %}</span>
                                 <span class="pull-right taxonomy"> 点赞:{% get_like_count posts_list_data %}&nbsp;</span>
                                 <span class="pull-right taxonomy">阅读:{{ posts_list_data.get_read_num }}&nbsp;</span>
                             </footer>
